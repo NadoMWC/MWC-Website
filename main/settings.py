@@ -38,8 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    # Your custom apps
+    # My custom apps
     'landing_page',
+    'MWC_Website',
 ]
 
 MIDDLEWARE = [
