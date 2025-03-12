@@ -1,0 +1,23 @@
+# Python bytecode files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+
+# Django migrations
+*/migrations/
+
+# Database files
+*.db
+
+# Static and media files
+static/
+media/
+
+# IDE or OS specific files
+.DS_Store
+.vscode/
+.idea/
