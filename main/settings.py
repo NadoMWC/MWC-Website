@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # Your custom apps
-    'home_page',
+    'landing_page',
 ]
 
 MIDDLEWARE = [
