@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # My custom apps
     'landing_page',
     'MWC_Website',
+    'admin_dashboard',
 ]
 
 MIDDLEWARE = [
