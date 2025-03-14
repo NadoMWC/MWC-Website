@@ -16,11 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.shortcuts import redirect
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('landing_page.urls')), # Linking the home_page app to the main app
-    path('MWC_Website/', include('MWC_Website.urls')),
-    path('admin_dashboard/', include('admin_dashboard.urls')),
-    path('login_page/', include('login_page.urls')),
+#     path('', lambda request: redirect('admin_login/')),
+#    path('administrator_login/', include('authenticate_user.urls')),
+#    path('administrator_dashboard/', include('admin_home.urls')),
+   path('admin/', admin.site.urls),
 ]

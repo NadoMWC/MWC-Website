@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class HomePageConfig(AppConfig):
+class AdministratorDashboardConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'landing_page'
+    name = 'administrator_dashboard'

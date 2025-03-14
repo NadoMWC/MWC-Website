@@ -39,10 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # My custom apps
-    'landing_page',
-    'MWC_Website',
-    'admin_dashboard',
-    'login_page',
+    'administrator_dashboard',
 ]
 
 MIDDLEWARE = [
