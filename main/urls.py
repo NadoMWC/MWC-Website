@@ -22,5 +22,5 @@ urlpatterns = [
     path('', include('landing_page.urls')), # Linking the home_page app to the main app
     path('MWC_Website/', include('MWC_Website.urls')),
     path('admin_dashboard/', include('admin_dashboard.urls')),
-    path('login/', include('login_page.urls')),
+    path('login_page/', include('login_page.urls')),
 ]

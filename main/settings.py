@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'landing_page',
     'MWC_Website',
     'admin_dashboard',
+    'login_page',
 ]
 
 MIDDLEWARE = [
@@ -80,8 +81,12 @@ WSGI_APPLICATION = 'main.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': 'mwcdatabase',      
+        'USER': 'admin',     
+        'PASSWORD': 'CoronadoMWC100$',   
+        'HOST': 'mwcdatabase.cf8mig00oekh.us-east-2.rds.amazonaws.com',  
+        'PORT': '3306',                      
     }
 }
 
