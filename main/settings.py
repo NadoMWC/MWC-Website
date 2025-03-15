@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # My custom apps
     'administrator_dashboard',
     'authentication_login',
+    'calendar_feature',
 ]
 
 LOGIN_URL = '/administrator_dashboard/'  # Adjust this if your login URL is different
