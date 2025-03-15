@@ -19,8 +19,8 @@ from django.urls import path, include
 from django.shortcuts import redirect
 
 urlpatterns = [
-#     path('', lambda request: redirect('admin_login/')),
-#    path('administrator_login/', include('authenticate_user.urls')),
-#    path('administrator_dashboard/', include('admin_home.urls')),
+   path('', lambda request: redirect('authentication_login/')),
+   path('authentication_login/', include('authentication_login.urls')),
+   path('administrator_dashboard/', include('administrator_dashboard.urls')),
    path('admin/', admin.site.urls),
 ]
