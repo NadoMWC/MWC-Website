@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import get_events, create_event
+from .views import EventView, CalendarView
+
 
 urlpatterns = [
-    path('events/', get_events, name="get-events"),  # ✅ Matches API call
-    path('events/create/', create_event, name="create-event"),
+    path('event/', EventView.as_view(), name='event_data'),
+    path('calendar/', CalendarView.as_view(), name='calendar_data'),
 ]
