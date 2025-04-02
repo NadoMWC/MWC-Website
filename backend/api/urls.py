@@ -1,8 +1,12 @@
 from django.urls import path
-from .views import EventView, CalendarView
+from .views import *
+from calendar_backend.views import *
 
 
 urlpatterns = [
-    path('event/', EventView.as_view(), name='event_data'),
-    path('calendar/', CalendarView.as_view(), name='calendar_data'),
+    path('customers/create/', create_customer, name='create_customer'),
+    path('customers/view/', get_customers, name='get_customers'),
+    path('customers/delete/<int:pk>/', delete_customer),
+    path('calendar/create_event/', create_event),
+    path('calendar/view_events/', view_events),
 ]

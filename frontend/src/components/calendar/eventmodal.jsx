@@ -3,11 +3,12 @@
 import './calendar.css'
 import React, { useState, useEffect } from 'react';
 
-function EventModal({ closeModal, handleOverlayClick}) {
+function EventModal({ closeModal, handleOverlayClick, eventData }) {
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <p>Empty Modal</p>
+        <h3>{eventData?.title}</h3>
+        <p>{eventData?.description}</p>
         <button onClick={closeModal}>Close</button>
       </div>
     </div>

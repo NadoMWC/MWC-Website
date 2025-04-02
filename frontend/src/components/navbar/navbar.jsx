@@ -9,6 +9,7 @@ function Navbar () {
         <nav>
             <Link to="/dashboard">Dashboard</Link>
             <Link to="/calendar">Calendar</Link>
+            <Link to="/testing">Testing</Link>
         </nav>
     );
 

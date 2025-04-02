@@ -1,3 +1,5 @@
+
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -20,4 +22,9 @@
   width: 90%;
   text-align: center;
   z-index: 1001;
+}
+
+
+.fc-event { 
+  pointer-events: none; /
 }
