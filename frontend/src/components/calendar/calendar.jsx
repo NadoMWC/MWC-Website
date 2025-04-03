@@ -16,7 +16,7 @@ function Calendar() {
     const clickedDate = info.dateStr;  // The clicked date in 'YYYY-MM-DD' format
     const clickedEvent = events.find(event => event.start === clickedDate);
 
-    setModalData(clickedEvent || { title: "No Event", description: "No event scheduled for this day." });
+    setModalData(clickedEvent || { title: "No Events Today"});
     
     setIsModalOpen(true);
     setIsModalLocked(true);
@@ -36,21 +36,16 @@ function Calendar() {
 
 
   const closeModal = () => {
-    if (isModalLocked) return; // Prevent closing if locked
+    if (isModalLocked) return; 
     setIsModalOpen(false);
   };
-
-
 
   const handleOverlayClick = (e) => {
     const modalContent = e.target.closest('.modal-content');
     if (!modalContent) {
-      closeModal(); // Only close if the modal is not locked
+      closeModal(); 
     }
   };
-
-
-
 
   const events = [
     {
@@ -67,10 +62,13 @@ function Calendar() {
       title: "Product Launch",
       start: "2025-04-15",
       description: "Launching the new website."
+    },
+    {
+      title: "Meeting with Client #2",
+      start: "2025-04-15",
+      description: "Diswqrwercuss project requirements and deadlinedsqwerqes."
     }
   ];
-
-
 
   return (
     <div>
@@ -95,4 +93,3 @@ function Calendar() {
 };
 
 export default Calendar;
-
