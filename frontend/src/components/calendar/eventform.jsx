@@ -3,14 +3,14 @@ import axios from 'axios';
 
 const EventForm = ({ existingInformation }) => {
   const [formData, setFormData] = useState({
-    name: existingInformation?.title || "",
-    address: "",
-    phone: "",
-    email: "",
-    cost: "",
-    date: "",
-    time: "",
-    notes: ""
+    name: existingInformation.title || "",
+    address: existingInformation.address || "",
+    phone: existingInformation.phone || "",
+    email: existingInformation.email || "",
+    cost: existingInformation.cost || "",
+    date: existingInformation.date || "",
+    time: existingInformation.time || "",
+    notes: existingInformation.notes || ""
   });
 
   const handleChange = (e) => {

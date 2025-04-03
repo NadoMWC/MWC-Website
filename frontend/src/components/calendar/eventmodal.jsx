@@ -2,20 +2,27 @@ import './calendar.css'
 import React, { useState, useEffect } from 'react';
 import EventForm from './eventform';
 
-function EventModal({ closeModal, handleOverlayClick, eventData }) {
+function EventModal({ closeModal, handleOverlayClick, eventData, eventsForDate }) {
   const [showForm, setShowForm] = useState(false);
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-      {showForm ? (
-        <EventForm 
-        existingInformation={eventData}/>
-      ) : (
-        <>
-          <p>No events</p>
-          <button onClick={() => setShowForm(true)}>Create Event</button>
-        </>
-      )}
+      
+        {/* Show events for the selected date if there are any */}
+        {eventsForDate.length > 0 && (
+            <ul>
+                {eventsForDate.map((event, index) => (
+                    <button onClick={() => setShowForm(true)} key={index}>{event.title}</button>
+                ))}
+            </ul>
+        )}
+
+        {/* Show message if there are no events */}
+        {eventsForDate.length === 0 && <p>No events for this date.</p>}
+
+      {/* Form should show only on create event click, or if an event itself is clicked */}
+      {showForm && <EventForm existingInformation={eventData} />}
+        <button onClick={() => setShowForm(true)}>Create Event</button>
         <button onClick={closeModal}>Close</button>
       </div>
     </div>
