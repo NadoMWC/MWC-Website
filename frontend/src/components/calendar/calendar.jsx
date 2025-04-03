@@ -1,9 +1,10 @@
 import './calendar.css'
-import { useState, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import EventModal from './eventmodal';
+import axios from 'axios';
 
 function Calendar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,28 +48,59 @@ function Calendar() {
     }
   };
 
-  const events = [
-    {
-      title: "Meeting with Client",
-      start: "2025-04-05",
-      description: "Discuss project requirements and deadlines."
-    },
-    {
-      title: "Team Standup",
-      start: "2025-04-10",
-      description: "Daily team standup meeting."
-    },
-    {
-      title: "Product Launch",
-      start: "2025-04-15",
-      description: "Launching the new website."
-    },
-    {
-      title: "Meeting with Client #2",
-      start: "2025-04-15",
-      description: "Diswqrwercuss project requirements and deadlinedsqwerqes."
-    }
-  ];
+
+
+
+  const [events, setEvents] = useState([]);
+
+  // Fetch events from the API when the component mounts
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/calendar/view_events/'); // Use the correct API URL
+        // Map the events to FullCalendar's format
+        const calendarEvents = response.data.map(event => ({
+          title: event.name,  // Map customer_name to title
+          start: event.date,           // Map date to start
+          address: event.address,
+        }));
+        setEvents(calendarEvents);  // Set mapped events data
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+
+
+  // const events = [
+  //   {
+  //     title: "Meeting with Client",
+  //     start: "2025-04-05",
+  //     description: "Discuss project requirements and deadlines.",
+  //     jobCost: 500
+  //   },
+  //   {
+  //     title: "Team Standup",
+  //     start: "2025-04-10",
+  //     description: "Daily team standup meeting.",
+  //     jobCost: 500
+  //   },
+  //   {
+  //     title: "Product Launch",
+  //     start: "2025-04-15",
+  //     description: "Launching the new website.",
+  //     jobCost: 500
+  //   },
+  //   {
+  //     title: "Meeting with Client #2",
+  //     start: "2025-04-15",
+  //     description: "Diswqrwercuss project requirements and deadlinedsqwerqes.",
+  //     jobCost: 500
+  //   }
+  // ];
 
   return (
     <div>
