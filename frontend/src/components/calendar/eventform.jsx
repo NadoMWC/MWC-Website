@@ -34,7 +34,7 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-
+  // DELETE/REMOVE EVENT
   const handleRemoveEvent = async () => {
     if (selectedEvent) {
       try {
@@ -48,6 +48,7 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
           window.location.reload(); // Reload to see the updated data
         } else {
           console.error("Failed to remove event");
+          window.location.reload();
         }
       } catch (error) {
         console.error("Error removing event:", error);

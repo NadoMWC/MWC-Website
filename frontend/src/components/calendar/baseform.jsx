@@ -2,7 +2,7 @@ import './calendar.css'
 import React, { useState, useEffect } from 'react';
 // import EventForm from './eventform';
 
-function BaseModal({ closeModal, events, setShowEventForm, setBaseForm, setSelectedEvent }) {
+function BaseModal({ closeModal, events, setShowEventForm, setBaseForm, setSelectedEvent, date }) {
 
     const handleEventClick = (event) => {
         setSelectedEvent(event);
@@ -18,7 +18,7 @@ function BaseModal({ closeModal, events, setShowEventForm, setBaseForm, setSelec
 
     return (
         <>
-            <p>Window 1</p>
+            <h1>{date}</h1>
             {events && events.length > 0 ? (
             events.map((event, index) => (
                 <button onClick={() => handleEventClick(event)} key={index}>

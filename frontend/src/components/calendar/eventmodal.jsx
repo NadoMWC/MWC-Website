@@ -1,6 +1,6 @@
 import './calendar.css'
 import React, { useState, useEffect } from 'react';
-import EventForm from './eventform';
+import EventForm from './eventform.jsx';
 import BaseModal from './baseform.jsx';
 
 function EventModal({ closeModal, handleOverlayClick, events, date }) {
@@ -21,6 +21,7 @@ function EventModal({ closeModal, handleOverlayClick, events, date }) {
             setBaseForm={setBaseForm}
             setShowEventForm={setEventForm}
             setSelectedEvent={setSelectedEvent}
+            date={date}
           />
         )}
 
