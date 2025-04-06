@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const EventForm = ({ selectedEvent, date }) => {
+const EventForm = ({ selectedEvent, date, closeModal }) => {
   const [formData, setFormData] = useState({
     name: selectedEvent?.title || "",
     address: selectedEvent?.address || "",
@@ -33,6 +33,28 @@ const EventForm = ({ selectedEvent, date }) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+
+  const handleRemoveEvent = async () => {
+    if (selectedEvent) {
+      try {
+        const response = await axios.delete(
+          `http://127.0.0.1:8000/api/calendar/delete_events/${selectedEvent.id}/`
+        );
+  
+        if (response.status === 200) {
+          console.log("Successfully removed event");
+          closeModal(); // Close the modal after deletion
+          window.location.reload(); // Reload to see the updated data
+        } else {
+          console.error("Failed to remove event");
+        }
+      } catch (error) {
+        console.error("Error removing event:", error);
+      }
+    }
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -158,7 +180,11 @@ const EventForm = ({ selectedEvent, date }) => {
           />
         </label>
 
+        
         <button type="submit">{selectedEvent ? "Update Event" : "Create Event"}</button>
+        <button onClick={selectedEvent ? handleRemoveEvent : closeModal}>
+                        {selectedEvent ? "Remove Event" : "Cancel Event"}
+        </button>
       </form>
     </div>
   );
