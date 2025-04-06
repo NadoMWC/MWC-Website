@@ -1,7 +1,7 @@
 from django.db import models
 
 class CalendarData(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.TextField(null=True, blank=True)
     address = models.TextField(null=True, blank=True)
     phone = models.TextField(null=True, blank=True)
     email = models.EmailField(null=True, blank=True)

@@ -10,6 +10,12 @@ function BaseModal({ closeModal, events, setShowEventForm, setBaseForm, setSelec
         setShowEventForm(true);
       };
 
+
+    const createNewEvent = () => {
+        setBaseForm(false);
+        setShowEventForm(true);
+    }
+
     return (
         <>
             <p>Window 1</p>
@@ -22,6 +28,7 @@ function BaseModal({ closeModal, events, setShowEventForm, setBaseForm, setSelec
             ) : (
             <p>No events</p>
             )}
+            <button onClick={createNewEvent}>Create New Event</button>
             <button onClick={closeModal}>Close Modal</button>
         </>
     );
