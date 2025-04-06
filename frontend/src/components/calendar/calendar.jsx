@@ -7,50 +7,16 @@ import EventModal from './eventmodal';
 import axios from 'axios';
 
 function Calendar() {
+  // //
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalLocked, setIsModalLocked] = useState(false); // Track if modal is locked for closing
   const [lockTimeout, setLockTimeout] = useState(null); // Store timeout ID
-  const [modalData, setModalData] = useState(null);
-
-  const [selectedDate, setSelectedDate] = useState(null);
+  // //
   const [eventsForDate, setEventsForDate] = useState([]);
-
-
-  const handleDateClick = (info) => {
-    const clickedDay = info.dateStr;
-
-
-    setSelectedDate(clickedDay);  
-    const filteredEvents = events.filter(event => event.start === selectedDate);
-    setEventsForDate(filteredEvents);
-
-    console.log("Date: ", {selectedDate})
-    console.log("Filtered Events: ", {filteredEvents})
-  
-    setIsModalOpen(true);
-    setIsModalLocked(true);
-
-    if (lockTimeout) clearTimeout(lockTimeout); 
-    const timeoutId = setTimeout(() => {setIsModalLocked(false); }, 500); 
-    setLockTimeout(timeoutId); 
-  };
-
-
-  const closeModal = () => {
-    if (isModalLocked) return; 
-    setIsModalOpen(false);
-  };
-
-  const handleOverlayClick = (e) => {
-    const modalContent = e.target.closest('.modal-content');
-    if (!modalContent) {
-      closeModal(); 
-    }
-  };
-
-
   const [events, setEvents] = useState([]);
 
+
+  
   // Fetch events from the API when the component mounts
   useEffect(() => {
     const fetchEvents = async () => {
@@ -78,14 +44,43 @@ function Calendar() {
   }, []);
 
 
+  const calendarClick = (info) => {
+    setIsModalOpen(true);
+    setIsModalLocked(true);
+
+    const clickedDay = info.dateStr;
+    const filteredEvents = events.filter(event => event.start === clickedDay);
+ 
+    setEventsForDate(filteredEvents);
+
+    console.log("Date: ", {clickedDay})
+    console.log("Filtered Events: ", {filteredEvents})
+  
+    if (lockTimeout) clearTimeout(lockTimeout); 
+    const timeoutId = setTimeout(() => {setIsModalLocked(false); }, 500); 
+    setLockTimeout(timeoutId); 
+  };
+
+
+  const closeModal = () => {
+    if (isModalLocked) 
+    return; 
+    setIsModalOpen(false);
+  };
+
+  const handleOverlayClick = (e) => {
+    const modalContent = e.target.closest('.modal-content');
+    if (!modalContent) {closeModal();}
+  };
+
   return (
     <div>
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         events={events}
-        eventClick={handleDateClick}
-        dateClick={handleDateClick}
+        eventClick={calendarClick}
+        dateClick={calendarClick}
       />
 
       {/* Conditionally render the EventModal */}
@@ -93,9 +88,9 @@ function Calendar() {
         <EventModal 
             closeModal={closeModal} 
             handleOverlayClick={handleOverlayClick}
-            eventData={modalData}
-            eventsForDate={eventsForDate}
+            events={eventsForDate}
              />
+          
       )}
     </div>
   );

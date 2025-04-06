@@ -1,33 +1,38 @@
 import './calendar.css'
 import React, { useState, useEffect } from 'react';
 import EventForm from './eventform';
+import BaseModal from './baseform.jsx';
 
-function EventModal({ closeModal, handleOverlayClick, eventData, eventsForDate }) {
-  const [showForm, setShowForm] = useState(false);
+function EventModal({ closeModal, handleOverlayClick, events }) {
+  const [currentForm, setCurrentForm] = useState('base'); // 'base' or 'event'
+
+  const handleShowEventForm = () => setCurrentForm('event');
+  const handleShowBaseForm = () => setCurrentForm('base');
+
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-      
-        {/* Show events for the selected date if there are any */}
-        {eventsForDate.length > 0 && (
-            <ul>
-                {eventsForDate.map((event, index) => (
-                    <button onClick={() => setShowForm(true)} key={index}>{event.title}</button>
-                ))}
-            </ul>
+
+        {currentForm === 'base' && (
+          <BaseModal
+            closeModal={closeModal}
+            events={events}
+            setShowEventForm={handleShowEventForm}
+            setBaseForm={handleShowBaseForm}
+          />
         )}
 
-        {/* Show message if there are no events */}
-        {eventsForDate.length === 0 && <p>No events for this date.</p>}
+        {currentForm === 'event' && (
+          <EventForm
+            closeModal={closeModal}
+            events={events}
+          />
+        )}
 
-      {/* Form should show only on create event click, or if an event itself is clicked */}
-      {showForm && <EventForm existingInformation={eventData} />}
-        <button onClick={() => setShowForm(true)}>Create Event</button>
-        <button onClick={closeModal}>Close</button>
       </div>
     </div>
   );
-};
+}
 
 export default EventModal;
 
@@ -38,7 +43,19 @@ export default EventModal;
 
 
 
+// {eventsForDate.length > 0 && (
+//   <ul>
+//       {eventsForDate.map((event, index) => (
+//           <button onClick={() => setShowForm(true)} key={index}>{event.title}</button>
+//       ))}
+//   </ul>
+// )}
+// {eventsForDate.length === 0 && <p>No events for this date.</p>}
 
+// {/* Form should show only on create event click, or if an event itself is clicked */}
+// {showForm && <EventForm />}
+// <button onClick={() => setShowForm(true)}>Create Event</button>
+// <button onClick={closeModal}>Close</button>
 
 
 
