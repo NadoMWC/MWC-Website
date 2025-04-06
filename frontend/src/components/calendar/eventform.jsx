@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const EventForm = ({ selectedEvent }) => {
   const [formData, setFormData] = useState({
@@ -12,25 +12,58 @@ const EventForm = ({ selectedEvent }) => {
     time: selectedEvent?.time || "",
     notes: selectedEvent?.notes || "",
   });
-    
+
+  // Update formData if selectedEvent changes
+  useEffect(() => {
+    if (selectedEvent) {
+      setFormData({
+        name: selectedEvent?.title || "",
+        address: selectedEvent?.address || "",
+        phone: selectedEvent?.phone || "",
+        email: selectedEvent?.email || "",
+        cost: selectedEvent?.cost || "",
+        date: selectedEvent?.start || "",
+        time: selectedEvent?.time || "",
+        notes: selectedEvent?.notes || "",
+      });
+    }
+  }, [selectedEvent]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {  // Ensure it's async
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData)
-  
+    
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/calendar/create_event/", formData);
-  
-      if (response.status === 201) {
-        console.log("Successfully created event");
-        window.location.reload();
+      if (selectedEvent) {
+        // If selectedEvent exists, update the existing event (PUT request)
+        const response = await axios.put(
+          `http://127.0.0.1:8000/api/calendar/update_events/${selectedEvent.id}/`,
+          formData
+        );
+
+        if (response.status === 200) {
+          console.log("Successfully updated event");
+          window.location.reload(); // Reload to see the updated data
+        } else {
+          console.error("Failed to update event");
+        }
       } else {
-        console.error("Failed to create event");
+        // If selectedEvent does not exist, create a new event (POST request)
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/calendar/create_events/",
+          formData
+        );
+
+        if (response.status === 201) {
+          console.log("Successfully created event");
+          window.location.reload(); // Reload to show the newly created event
+        } else {
+          console.error("Failed to create event");
+        }
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -42,7 +75,7 @@ const EventForm = ({ selectedEvent }) => {
       <p>Window 2</p>
 
       <form onSubmit={handleSubmit}>
-        <h2>{selectedEvent?.start || ""}</h2>
+        <h2>{selectedEvent ? "Edit Event" : "Create New Event"}</h2>
 
         <label>
           Name:
@@ -99,7 +132,7 @@ const EventForm = ({ selectedEvent }) => {
           <input
             type="date"
             name="date"
-            value={formData.start}
+            value={formData.date}
             onChange={handleChange}
           />
         </label>
@@ -124,7 +157,7 @@ const EventForm = ({ selectedEvent }) => {
           />
         </label>
 
-        <button type="submit">Submit</button>
+        <button type="submit">{selectedEvent ? "Update Event" : "Create Event"}</button>
       </form>
     </div>
   );

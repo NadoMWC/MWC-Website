@@ -16,7 +16,7 @@ function Calendar() {
   const [events, setEvents] = useState([]);
 
 
-  
+
   // Fetch events from the API when the component mounts
   useEffect(() => {
     const fetchEvents = async () => {
@@ -24,6 +24,7 @@ function Calendar() {
         const response = await axios.get('http://127.0.0.1:8000/api/calendar/view_events/'); // Use the correct API URL
         // Map the events to FullCalendar's format
         const calendarEvents = response.data.map(event => ({
+          id: event.id,
           title: event.name, 
           address: event.address,
           phone: event.phone,

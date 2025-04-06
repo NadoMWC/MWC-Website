@@ -4,10 +4,11 @@ import EventForm from './eventform';
 import BaseModal from './baseform.jsx';
 
 function EventModal({ closeModal, handleOverlayClick, events }) {
-  
+
   const [baseForm, setBaseForm] = useState(true);
   const [eventForm, setEventForm] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
