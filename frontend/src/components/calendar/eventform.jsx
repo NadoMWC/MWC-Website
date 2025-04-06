@@ -1,42 +1,27 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const EventForm = ({ events }) => {
-
-  const [selectedEvent, setSelectedEvent] = useState(null);
-
-  const handleEventClick = (index) => {
-    setSelectedEvent(index);  // Set the selected event index
-  };
-
+const EventForm = ({ selectedEvent }) => {
   return (
     <div>
       <p>Window 2</p>
-      {selectedEvent !== null && events[selectedEvent] ? (  // Check if selectedEvent is set and within bounds
+      {selectedEvent ? (
         <div>
-          <h2>{events[selectedEvent].start}</h2>
-          <p>Title: {events[selectedEvent].title}</p>
-          <p>Time: {events[selectedEvent].time}</p>
-          <p>Phone: {events[selectedEvent].phone}</p>
-          <p>Address: {events[selectedEvent].address}</p>
-          <p>Cost: {events[selectedEvent].cost}</p>
-          <p>Email: {events[selectedEvent].email}</p>
-          <p>Notes: {events[selectedEvent].notes}</p>
+          <h2>{selectedEvent.start}</h2>
+          <p>Title: {selectedEvent.title}</p>
+          <p>Time: {selectedEvent.time}</p>
+          <p>Phone: {selectedEvent.phone}</p>
+          <p>Address: {selectedEvent.address}</p>
+          <p>Cost: {selectedEvent.cost}</p>
+          <p>Email: {selectedEvent.email}</p>
+          <p>Notes: {selectedEvent.notes}</p>
         </div>
       ) : (
         <p>No event selected</p>
       )}
-  
-      <div>
-        {events.map((event, index) => (
-          <button key={index} onClick={() => handleEventClick(index)}>
-            View {event.title}
-          </button>
-        ))}
-      </div>
     </div>
   );
-}
+};
 
 export default EventForm;
 

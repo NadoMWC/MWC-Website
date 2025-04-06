@@ -1,15 +1,13 @@
 import './calendar.css'
-// import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // import EventForm from './eventform';
 
-function BaseModal({ closeModal, events, setShowEventForm, setBaseForm }) {
-    const [selectedEvent, setSelectedEvent] = useState(null);
+function BaseModal({ closeModal, events, setShowEventForm, setBaseForm, setSelectedEvent }) {
 
     const handleEventClick = (event) => {
+        setSelectedEvent(event);
         setBaseForm(false);
         setShowEventForm(true);
-        setSelectedEvent(event);
-        setSelectedEvent(index);
       };
 
     return (

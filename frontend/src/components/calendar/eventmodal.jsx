@@ -4,28 +4,30 @@ import EventForm from './eventform';
 import BaseModal from './baseform.jsx';
 
 function EventModal({ closeModal, handleOverlayClick, events }) {
-  const [currentForm, setCurrentForm] = useState('base'); // 'base' or 'event'
+  const [baseForm, setBaseForm] = useState(true);
+  const [eventForm, setEventForm] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const handleShowEventForm = () => setCurrentForm('event');
-  const handleShowBaseForm = () => setCurrentForm('base');
+
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
 
-        {currentForm === 'base' && (
+        {baseForm && (
           <BaseModal
             closeModal={closeModal}
             events={events}
-            setShowEventForm={handleShowEventForm}
-            setBaseForm={handleShowBaseForm}
+            setBaseForm={setBaseForm}
+            setShowEventForm={setEventForm}
+            setSelectedEvent={setSelectedEvent}
           />
         )}
 
-        {currentForm === 'event' && (
+        {eventForm && (
           <EventForm
             closeModal={closeModal}
-            events={events}
+            selectedEvent={selectedEvent}
           />
         )}
 
