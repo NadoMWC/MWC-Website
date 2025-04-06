@@ -14,6 +14,7 @@ function Calendar() {
   // //
   const [eventsForDate, setEventsForDate] = useState([]);
   const [events, setEvents] = useState([]);
+  const [clickedDate, setClickedDate] = useState([])
 
 
 
@@ -53,7 +54,7 @@ function Calendar() {
     const filteredEvents = events.filter(event => event.start === clickedDay);
  
     setEventsForDate(filteredEvents);
-
+    setClickedDate(clickedDay)
     console.log("Date: ", {clickedDay})
     console.log("Filtered Events: ", {filteredEvents})
   
@@ -90,6 +91,7 @@ function Calendar() {
             closeModal={closeModal} 
             handleOverlayClick={handleOverlayClick}
             events={eventsForDate}
+            date={clickedDate}
              />
           
       )}

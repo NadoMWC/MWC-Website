@@ -22,7 +22,7 @@ function BaseModal({ closeModal, events, setShowEventForm, setBaseForm, setSelec
             {events && events.length > 0 ? (
             events.map((event, index) => (
                 <button onClick={() => handleEventClick(event)} key={index}>
-                View {event.title}
+                {event.title}
                 </button>
             ))
             ) : (

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import EventForm from './eventform';
 import BaseModal from './baseform.jsx';
 
-function EventModal({ closeModal, handleOverlayClick, events }) {
+function EventModal({ closeModal, handleOverlayClick, events, date }) {
 
   const [baseForm, setBaseForm] = useState(true);
   const [eventForm, setEventForm] = useState(false);
@@ -28,6 +28,7 @@ function EventModal({ closeModal, handleOverlayClick, events }) {
           <EventForm
             closeModal={closeModal}
             selectedEvent={selectedEvent}
+            date={date}
           />
         )}
 

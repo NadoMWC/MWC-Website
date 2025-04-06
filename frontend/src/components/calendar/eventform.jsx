@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const EventForm = ({ selectedEvent }) => {
+const EventForm = ({ selectedEvent, date }) => {
   const [formData, setFormData] = useState({
     name: selectedEvent?.title || "",
     address: selectedEvent?.address || "",
     phone: selectedEvent?.phone || "",
     email: selectedEvent?.email || "",
     cost: selectedEvent?.cost || "",
-    date: selectedEvent?.start || "",
+    date: date || "",
     time: selectedEvent?.time || "",
     notes: selectedEvent?.notes || "",
   });
@@ -73,6 +73,7 @@ const EventForm = ({ selectedEvent }) => {
   return (
     <div>
       <p>Window 2</p>
+      <p>{date}</p>
 
       <form onSubmit={handleSubmit}>
         <h2>{selectedEvent ? "Edit Event" : "Create New Event"}</h2>
