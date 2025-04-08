@@ -1,6 +1,6 @@
 import './dashboard.css'
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from '../../api/axiosInstance.js'
 
 function Dashboard() {
     const [eventData, setEventData] = useState(null);
@@ -12,7 +12,7 @@ function Dashboard() {
             const token = localStorage.getItem('access_token');  // Get the JWT token from localStorage
 
             try {
-                const response = await axios.get('http://127.0.0.1:8000/api/calendar/view_events/', {
+                const response = await axiosInstance.get('http://127.0.0.1:8000/api/calendar/view_events/', {
                     headers: {
                         'Authorization': `Bearer ${token}`,  // Add token to the Authorization header
                     },

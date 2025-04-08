@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './loginpage.css'
+import { useAuth } from '../context/AuthContext.jsx'
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -18,6 +21,8 @@ const LoginPage = () => {
       // Store Tokens
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
+
+      login(access);
 
       // Redirect to the protected page
       navigate('/dashboard');

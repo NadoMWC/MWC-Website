@@ -4,6 +4,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext.jsx';
 
 
 function Testing() {
@@ -12,6 +13,12 @@ function Testing() {
   const [lockTimeout, setLockTimeout] = useState(null); // Store timeout ID
   const [eventsForDate, setEventsForDate] = useState([]);
   const [events, setEvents] = useState([]);
+
+
+  const { user } = useAuth();
+  useEffect(() => {
+    console.log('User data:', user.user_id);
+  }, [user]);
 
  // Fetch events from the API when the component mounts
  useEffect(() => {

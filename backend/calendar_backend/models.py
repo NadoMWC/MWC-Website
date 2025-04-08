@@ -9,6 +9,7 @@ class CalendarData(models.Model):
     date = models.DateField(null=True, blank=True)
     time = models.TimeField(null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
+    color = models.TextField(null=True, blank=True)
     
 
     def __str__(self):

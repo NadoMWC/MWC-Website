@@ -12,8 +12,7 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
     time: selectedEvent?.time || "",
     notes: selectedEvent?.description || "",
   });
-  console.log(selectedEvent)
-  // Update formData if selectedEvent changes
+
   useEffect(() => {
     if (selectedEvent) {
       setFormData({

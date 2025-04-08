@@ -5,6 +5,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import EventModal from './eventmodal';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext.jsx'
+
 
 function Calendar() {
   // //
@@ -15,6 +17,29 @@ function Calendar() {
   const [eventsForDate, setEventsForDate] = useState([]);
   const [events, setEvents] = useState([]);
   const [clickedDate, setClickedDate] = useState([])
+
+
+
+
+  const userColorMapping = {
+    1: 'green',  // User 1 gets a green color
+    2: 'blue',   // User 2 gets a blue color
+    3: 'red',    // User 3 gets a red color
+    // Add more users and colors as needed
+  };
+
+  const { user } = useAuth(); // Get the current user (logged-in user)
+
+  // Function to get event color based on the user's ID
+  const getEventColor = (eventUserId) => {
+    // Use userColorMapping to get the color based on user ID
+    if (user) {
+      return userColorMapping[user.id] || 'gray'; // Default to gray if no mapping exists
+    }
+    return 'gray'; // Default color if no user is logged in
+  };
+
+
 
 
 
@@ -82,12 +107,16 @@ function Calendar() {
     if (!modalContent) {closeModal();}
   };
 
+
+  const defaultColor = 'green';
+
   return (
     <div>
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         events={events}
+        eventColor="rgb(0, 255, 0)"
         eventClick={calendarClick}
         dateClick={calendarClick}
       />
