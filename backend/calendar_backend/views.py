@@ -1,8 +1,10 @@
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from .models import CalendarData
 from .serializers import CalendarSerializer
+from rest_framework.permissions import IsAuthenticated  
+from rest_framework_simplejwt.authentication import JWTAuthentication  
 
 
 
@@ -19,8 +21,11 @@ def create_events(request):
 
 # **VIEW AN EVENT**
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])  # Adding authentication class to check for JWT token in request
+@permission_classes([IsAuthenticated])  # Adding permission class to ensure the user is authenticated
 def view_events(request):
-    event = CalendarData.objects.all()  # Fetch all customers from the database
+    # **FETCH EVENTS**
+    event = CalendarData.objects.all()  # Fetch all events from the database
     serializer = CalendarSerializer(event, many=True)  # Serialize the data
     return Response(serializer.data)  # Return the serialized data as JSON
 

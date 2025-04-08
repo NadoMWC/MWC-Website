@@ -19,31 +19,38 @@ function Calendar() {
 
 
   // Fetch events from the API when the component mounts
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:8000/api/calendar/view_events/'); // Use the correct API URL
-        // Map the events to FullCalendar's format
-        const calendarEvents = response.data.map(event => ({
-          id: event.id,
-          title: event.name, 
-          address: event.address,
-          phone: event.phone,
-          email: event.email,
-          cost: event.cost,
-          start: event.date, 
-          time: event.time,
-          notes: event.notes
+ useEffect(() => {
+  const fetchEvents = async () => {
+    const token = localStorage.getItem('access_token');  // Get the JWT token from localStorage
 
-        }));
-        setEvents(calendarEvents);  // Set mapped events data
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      }
-    };
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/calendar/view_events/', {
+        headers: {
+          'Authorization': `Bearer ${token}`,  // Include the token in the Authorization header
+        },
+      });
 
-    fetchEvents();
-  }, []);
+      // Map the events to FullCalendar's format
+      const calendarEvents = response.data.map(event => ({
+        id: event.id,
+        title: event.name,
+        start: event.date,
+        cost: event.cost,
+        description: event.notes,
+        address: event.address,
+        phone: event.phone,
+        email: event.email,
+        time: event.time
+      }));
+
+      setEvents(calendarEvents);  // Set mapped events data
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  fetchEvents();
+}, []);
 
 
   const calendarClick = (info) => {

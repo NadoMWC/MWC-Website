@@ -10,9 +10,9 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
     cost: selectedEvent?.cost || "",
     date: date || "",
     time: selectedEvent?.time || "",
-    notes: selectedEvent?.notes || "",
+    notes: selectedEvent?.description || "",
   });
-
+  console.log(selectedEvent)
   // Update formData if selectedEvent changes
   useEffect(() => {
     if (selectedEvent) {
@@ -24,10 +24,16 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
         cost: selectedEvent?.cost || "",
         date: selectedEvent?.start || "",
         time: selectedEvent?.time || "",
-        notes: selectedEvent?.notes || "",
+        notes: selectedEvent?.description || "",
       });
     }
   }, [selectedEvent]);
+
+  // Get the token from localStorage
+  const token = localStorage.getItem("access_token");
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,7 +45,8 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
     if (selectedEvent) {
       try {
         const response = await axios.delete(
-          `http://127.0.0.1:8000/api/calendar/delete_events/${selectedEvent.id}/`
+          `http://127.0.0.1:8000/api/calendar/delete_events/${selectedEvent.id}/`,
+          {headers}
         );
   
         if (response.status === 200) {
@@ -65,7 +72,8 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
         // If selectedEvent exists, update the existing event (PUT request)
         const response = await axios.put(
           `http://127.0.0.1:8000/api/calendar/update_events/${selectedEvent.id}/`,
-          formData
+          formData,
+          {headers}
         );
 
         if (response.status === 200) {
@@ -78,7 +86,8 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
         // If selectedEvent does not exist, create a new event (POST request)
         const response = await axios.post(
           "http://127.0.0.1:8000/api/calendar/create_events/",
-          formData
+          formData,
+          {headers}
         );
 
         if (response.status === 201) {
@@ -95,9 +104,7 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
 
   return (
     <div>
-      <p>Window 2</p>
       <p>{date}</p>
-
       <form onSubmit={handleSubmit}>
         <h2>{selectedEvent ? "Edit Event" : "Create New Event"}</h2>
 
