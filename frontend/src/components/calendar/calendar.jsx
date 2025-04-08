@@ -65,7 +65,8 @@ function Calendar() {
         address: event.address,
         phone: event.phone,
         email: event.email,
-        time: event.time
+        time: event.time,
+        color: event.color
       }));
 
       setEvents(calendarEvents);  // Set mapped events data
@@ -108,7 +109,7 @@ function Calendar() {
   };
 
 
-  const defaultColor = 'green';
+  const defaultColor = 'rgb(0, 255, 0)';
 
   return (
     <div>
@@ -116,7 +117,7 @@ function Calendar() {
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         events={events}
-        eventColor="rgb(0, 255, 0)"
+        eventColor={defaultColor}
         eventClick={calendarClick}
         dateClick={calendarClick}
       />

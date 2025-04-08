@@ -1,7 +1,19 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useAuth } from '../../context/AuthContext.jsx'
 
 const EventForm = ({ selectedEvent, date, closeModal }) => {
+
+  const { user } = useAuth();
+  useEffect(() => {console.log('User data:', user.user_id);}, [user]);
+  const colorMapping = {
+    1: '#1E3A8A', // Drew Default Color // Dark Blue
+    2: '#3B82F6', // Jason Default Color // Normal Blue
+    3: '#93C5FD', // Wray Default Color // Light Blue
+  };
+
+  const defaultColor = colorMapping[user.user_id] || '#FF6347'; // Fallback to light red if no match
+
   const [formData, setFormData] = useState({
     name: selectedEvent?.title || "",
     address: selectedEvent?.address || "",
@@ -11,6 +23,7 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
     date: date || "",
     time: selectedEvent?.time || "",
     notes: selectedEvent?.description || "",
+    color: defaultColor || "",
   });
 
   useEffect(() => {
@@ -24,15 +37,16 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
         date: selectedEvent?.start || "",
         time: selectedEvent?.time || "",
         notes: selectedEvent?.description || "",
+        color: selectedEvent?.color || "",
       });
     }
   }, [selectedEvent]);
 
+  
+
   // Get the token from localStorage
   const token = localStorage.getItem("access_token");
-  const headers = {
-    Authorization: `Bearer ${token}`,
-  };
+  const headers = {Authorization: `Bearer ${token}`,};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -185,6 +199,15 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
             value={formData.notes}
             onChange={handleChange}
           />
+        </label>
+
+        <label>
+        Color:
+        <input
+          type="color"
+          name="color"
+          value={formData.color}
+          onChange={handleChange}/>
         </label>
 
         
