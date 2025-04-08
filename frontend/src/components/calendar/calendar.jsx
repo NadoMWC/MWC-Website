@@ -4,7 +4,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import EventModal from './eventmodal';
-import axios from 'axios';
+import axiosInstance from '../../api/axiosInstance.js';
 import { useAuth } from '../../context/AuthContext.jsx'
 
 
@@ -49,7 +49,7 @@ function Calendar() {
     const token = localStorage.getItem('access_token');  // Get the JWT token from localStorage
 
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/calendar/view_events/', {
+      const response = await axiosInstance.get('http://127.0.0.1:8000/api/calendar/view_events/', {
         headers: {
           'Authorization': `Bearer ${token}`,  // Include the token in the Authorization header
         },
@@ -109,7 +109,6 @@ function Calendar() {
   };
 
 
-  const defaultColor = 'rgb(0, 255, 0)';
 
   return (
     <div>
@@ -117,7 +116,6 @@ function Calendar() {
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         events={events}
-        eventColor={defaultColor}
         eventClick={calendarClick}
         dateClick={calendarClick}
       />

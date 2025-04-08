@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from '../../api/axiosInstance.js';
 import { useAuth } from '../../context/AuthContext.jsx'
 
 const EventForm = ({ selectedEvent, date, closeModal }) => {
@@ -57,7 +57,7 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
   const handleRemoveEvent = async () => {
     if (selectedEvent) {
       try {
-        const response = await axios.delete(
+        const response = await axiosInstance.delete(
           `http://127.0.0.1:8000/api/calendar/delete_events/${selectedEvent.id}/`,
           {headers}
         );
@@ -79,16 +79,39 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
+    // Ensure that the name/title is not empty
+    if (!formData.name.trim()) {
+      alert('Event name/title is required');
+      return; // Don't submit if name is missing
+    }
+
+    if (!formData.date.trim()) {
+      alert('Event date is required');
+      return; // Don't submit if date is missing
+    }
+  
+    // Prepare the form data for submission (make other fields null if empty)
+    const eventData = {
+      ...formData,
+      address: formData.address || null,
+      phone: formData.phone || null,
+      email: formData.email || null,
+      cost: formData.cost || null,
+      time: formData.time || null,
+      notes: formData.notes || null, 
+      color: formData.color || null, 
+    };
+  
     try {
       if (selectedEvent) {
         // If selectedEvent exists, update the existing event (PUT request)
-        const response = await axios.put(
+        const response = await axiosInstance.put(
           `http://127.0.0.1:8000/api/calendar/update_events/${selectedEvent.id}/`,
-          formData,
-          {headers}
+          eventData,
+          { headers }
         );
-
+  
         if (response.status === 200) {
           console.log("Successfully updated event");
           window.location.reload(); // Reload to see the updated data
@@ -97,12 +120,12 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
         }
       } else {
         // If selectedEvent does not exist, create a new event (POST request)
-        const response = await axios.post(
+        const response = await axiosInstance.post(
           "http://127.0.0.1:8000/api/calendar/create_events/",
-          formData,
-          {headers}
+          eventData,
+          { headers }
         );
-
+  
         if (response.status === 201) {
           console.log("Successfully created event");
           window.location.reload(); // Reload to show the newly created event
