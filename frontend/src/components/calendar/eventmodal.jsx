@@ -1,5 +1,5 @@
 import './calendar.css'
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import EventForm from './eventform.jsx';
 import BaseModal from './baseform.jsx';
 
@@ -9,11 +9,11 @@ function EventModal({ closeModal, handleOverlayClick, events, date }) {
   const [eventForm, setEventForm] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
 
+        {/* Conditionally Render this component - Appears first - Starting state is True */}
         {baseForm && (
           <BaseModal
             closeModal={closeModal}
@@ -21,22 +21,19 @@ function EventModal({ closeModal, handleOverlayClick, events, date }) {
             setBaseForm={setBaseForm}
             setShowEventForm={setEventForm}
             setSelectedEvent={setSelectedEvent}
-            date={date}
-          />
-        )}
+            date={date}/>)}
 
+        {/* Conditionally Render this component if EventFormState is True */}
         {eventForm && (
           <EventForm
             closeModal={closeModal}
             selectedEvent={selectedEvent}
-            date={date}
-          />
-        )}
+            date={date}/>)}
 
       </div>
     </div>
   );
-}
+};
 
 export default EventModal;
 

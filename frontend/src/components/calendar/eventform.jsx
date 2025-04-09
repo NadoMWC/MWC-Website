@@ -4,16 +4,17 @@ import { useAuth } from '../../context/AuthContext.jsx'
 
 const EventForm = ({ selectedEvent, date, closeModal }) => {
 
+  // Access User Info and log id to ensure its working
   const { user } = useAuth();
   useEffect(() => {console.log('User data:', user.user_id);}, [user]);
-  const colorMapping = {
-    1: '#1E3A8A', // Drew Default Color // Dark Blue
-    2: '#3B82F6', // Jason Default Color // Normal Blue
-    3: '#93C5FD', // Wray Default Color // Light Blue
-  };
 
+  // Get the token from localStorage
+  const token = localStorage.getItem("access_token");
+  const headers = {Authorization: `Bearer ${token}`,};
+  const colorMapping = {1: '#1E3A8A', 2: '#3B82F6', 3: '#93C5FD'};
   const defaultColor = colorMapping[user.user_id] || '#FF6347'; // Fallback to light red if no match
-
+  
+  // Form Data to be sent in request
   const [formData, setFormData] = useState({
     name: selectedEvent?.title || "",
     address: selectedEvent?.address || "",
@@ -26,9 +27,8 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
     color: defaultColor || "",
   });
 
-  useEffect(() => {
-    if (selectedEvent) {
-      setFormData({
+  // If selected Event exist, populate the formdata with the existing information.
+  useEffect(() => {if (selectedEvent) {setFormData({
         name: selectedEvent?.title || "",
         address: selectedEvent?.address || "",
         phone: selectedEvent?.phone || "",
@@ -38,15 +38,7 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
         time: selectedEvent?.time || "",
         notes: selectedEvent?.description || "",
         color: selectedEvent?.color || "",
-      });
-    }
-  }, [selectedEvent]);
-
-  
-
-  // Get the token from localStorage
-  const token = localStorage.getItem("access_token");
-  const headers = {Authorization: `Bearer ${token}`,};
+      });}}, [selectedEvent]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,39 +51,27 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
       try {
         const response = await axiosInstance.delete(
           `http://127.0.0.1:8000/api/calendar/delete_events/${selectedEvent.id}/`,
-          {headers}
-        );
+          {headers});
   
         if (response.status === 200) {
           console.log("Successfully removed event");
-          closeModal(); // Close the modal after deletion
-          window.location.reload(); // Reload to see the updated data
-        } else {
-          console.error("Failed to remove event");
-          window.location.reload();
-        }
-      } catch (error) {
-        console.error("Error removing event:", error);
-      }
+          closeModal(); 
+          window.location.reload();}
+        else {console.error("Failed to remove event");}
+      } 
+      catch (error) {console.error("Error removing event:", error);}
     }
   };
 
-
+  // Create or Update an event based on if an event exist
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Ensure that the name/title is not empty
-    if (!formData.name.trim()) {
-      alert('Event name/title is required');
-      return; // Don't submit if name is missing
-    }
-
-    if (!formData.date.trim()) {
-      alert('Event date is required');
-      return; // Don't submit if date is missing
-    }
+    // Make sure the Name & Date entries are not blank
+    if (!formData.name.trim()) {alert('Event name/title is required'); return;}
+    if (!formData.date.trim()) {alert('Event date is required'); return;}
   
-    // Prepare the form data for submission (make other fields null if empty)
+    // Prepare the form data for submission
     const eventData = {
       ...formData,
       address: formData.address || null,
@@ -100,42 +80,34 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
       cost: formData.cost || null,
       time: formData.time || null,
       notes: formData.notes || null, 
-      color: formData.color || null, 
-    };
-  
+      color: formData.color || null,};
+      
     try {
+
+      // UPDATE EXISTING EVENT
       if (selectedEvent) {
-        // If selectedEvent exists, update the existing event (PUT request)
         const response = await axiosInstance.put(
           `http://127.0.0.1:8000/api/calendar/update_events/${selectedEvent.id}/`,
-          eventData,
-          { headers }
-        );
-  
-        if (response.status === 200) {
-          console.log("Successfully updated event");
-          window.location.reload(); // Reload to see the updated data
-        } else {
-          console.error("Failed to update event");
-        }
-      } else {
-        // If selectedEvent does not exist, create a new event (POST request)
+          eventData, {headers});
+        if (response.status === 200) 
+          {console.log("Successfully updated event");
+          window.location.reload();} 
+        else 
+          {console.error("Failed to update event");}} 
+
+      // CREATE NEW EVENT
+      else {
         const response = await axiosInstance.post(
           "http://127.0.0.1:8000/api/calendar/create_events/",
-          eventData,
-          { headers }
-        );
+          eventData,{headers});
   
-        if (response.status === 201) {
-          console.log("Successfully created event");
-          window.location.reload(); // Reload to show the newly created event
-        } else {
-          console.error("Failed to create event");
-        }
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-    }
+        if (response.status === 201) 
+          {console.log("Successfully created event");
+          window.location.reload();} 
+        else 
+          {console.error("Failed to create event");}}} 
+
+        catch (error) {console.error("Error submitting form:", error);}
   };
 
   return (
@@ -144,118 +116,75 @@ const EventForm = ({ selectedEvent, date, closeModal }) => {
       <form onSubmit={handleSubmit}>
         <h2>{selectedEvent ? "Edit Event" : "Create New Event"}</h2>
 
-        <label>
-          Name:
+        <label>Name:
           <input
             type="text"
             name="name"
             value={formData.name}
-            onChange={handleChange}
-          />
-        </label>
+            onChange={handleChange}/></label>
 
-        <label>
-          Address:
+        <label>Address:
           <input
             type="text"
             name="address"
             value={formData.address}
-            onChange={handleChange}
-          />
-        </label>
+            onChange={handleChange}/></label>
 
-        <label>
-          Phone:
+        <label>Phone:
           <input
             type="text"
             name="phone"
             value={formData.phone}
-            onChange={handleChange}
-          />
-        </label>
+            onChange={handleChange}/></label>
 
-        <label>
-          Email:
+        <label>Email:
           <input
             type="email"
             name="email"
             value={formData.email}
-            onChange={handleChange}
-          />
-        </label>
+            onChange={handleChange}/></label>
 
-        <label>
-          Cost:
+        <label>Cost:
           <input
             type="text"
             name="cost"
             value={formData.cost}
-            onChange={handleChange}
-          />
-        </label>
+            onChange={handleChange}/></label>
 
-        <label>
-          Date:
+        <label>Date:
           <input
             type="date"
             name="date"
             value={formData.date}
-            onChange={handleChange}
-          />
-        </label>
+            onChange={handleChange}/></label>
 
-        <label>
-          Time:
+        <label>Time:
           <input
             type="time"
             name="time"
             value={formData.time}
-            onChange={handleChange}
-          />
-        </label>
+            onChange={handleChange}/></label>
 
-        <label>
-          Notes:
+        <label>Notes:
           <input
             type="text"
             name="notes"
             value={formData.notes}
-            onChange={handleChange}
-          />
-        </label>
+            onChange={handleChange}/></label>
 
-        <label>
-        Color:
-        <input
-          type="color"
-          name="color"
-          value={formData.color}
-          onChange={handleChange}/>
-        </label>
+        <label>Color:
+          <input 
+            type="color" 
+            name="color" 
+            value={formData.color} 
+            onChange={handleChange}/></label>
 
-        
         <button type="submit">{selectedEvent ? "Update Event" : "Create Event"}</button>
         <button onClick={selectedEvent ? handleRemoveEvent : closeModal}>
-                        {selectedEvent ? "Remove Event" : "Cancel Event"}
-        </button>
+                        {selectedEvent ? "Remove Event" : "Cancel Event"}</button>
       </form>
     </div>
   );
 };
 
 export default EventForm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

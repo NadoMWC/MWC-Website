@@ -1,5 +1,6 @@
 import './footer.css'
 
+
 function Footer () {
 
     const year = new Date().getFullYear();
@@ -9,7 +10,6 @@ function Footer () {
             <p> &copy; {year} MWC Family </p>
         </>
     );
-
 }
 
 export default Footer

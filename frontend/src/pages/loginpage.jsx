@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx'
-import axiosInstance from '../api/axiosInstance.js'
+import axios from 'axios';
 import './loginpage.css'
 
 const LoginPage = () => {
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -16,16 +17,15 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const tokens = await axiosInstance.post('http://localhost:8000/login/token/', {username, password,});
+      // Check If User is Authenticated/Return Tokens
+      const tokens = await axios.post('http://localhost:8000/login/token/', {username, password,});
       const { access, refresh } = tokens.data;
 
       localStorage.setItem('access_token', access);  // STORE ACCESS TOKEN
       localStorage.setItem('refresh_token', refresh);  // STORE REFRESH TOKEN
-
       login(access);  // STORE USER LOGIN INFO IN STATE FOR PERMISSIONS
-      navigate('/dashboard');
+      navigate('/dashboard');}
 
-      console.log('✅ Success:', tokens.data);} 
       catch (err) 
         {if (err.tokens) 
             {console.log('❌ Error:', err.tokens.data.message);} 
