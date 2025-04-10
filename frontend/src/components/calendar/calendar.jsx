@@ -1,71 +1,59 @@
-import './calendar.css'
-import { useState, useEffect } from 'react';
+import './calendar.css';
+import { useState, useEffect, useRef } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import EventModal from './eventmodal';
-import axiosInstance from '../../api/axiosInstance.js';
-import { useAuth } from '../../context/AuthContext.jsx'
+import TestModal from './testmodal.jsx'
+
+function MyCalendar() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [canCloseModal, setCanCloseModal] = useState(false);
+  const [clickedEventData, setClickedEventData] = useState(null);
 
 
-function Calendar() {
-  // States
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal Open/Hidden
-  const [isModalLocked, setIsModalLocked] = useState(false); // Prevent Immediate Close
-  const [lockTimeout, setLockTimeout] = useState(null); // Prevent Immediate Close
-  const [eventsForDate, setEventsForDate] = useState([]); // Stores events info for date clicked
-  const [clickedDate, setClickedDate] = useState([]) // Date clicked
-  const [events, setEvents] = useState([]); // Events loaded into calendar
-
-  // Fetch events from the API when the component mounts
-  useEffect(() => {
-    const fetchEvents = async () => {
-      const token = localStorage.getItem('access_token');
-
-      try {
-        const response = await axiosInstance.get('http://127.0.0.1:8000/api/calendar/view_events/', 
-          {headers: {'Authorization': `Bearer ${token}`}});
-
-        // Map the events to FullCalendar's format
-        const calendarEvents = response.data.map(event => ({
-          id: event.id,
-          title: event.name,
-          start: event.date,
-          cost: event.cost,
-          description: event.notes,
-          address: event.address,
-          phone: event.phone,
-          email: event.email,
-          time: event.time,
-          color: event.color}));
-
-        setEvents(calendarEvents);}
-
-        catch (error) {console.error("Error fetching events:", error);}}; 
-        fetchEvents();}, []);
-
+  // Handle date clicks (switch to day view from month view)
   const calendarClick = (info) => {
-    
     const clickedDay = info.dateStr;
-    const filteredEvents = events.filter(event => event.start === clickedDay);
-    
-    // Update States on Click
-    setIsModalOpen(true);
-    setIsModalLocked(true);
+    const currentView = info.view.type;
+  
+    // If in Month View, Clicks will activate Day View & Enable Event Clicks
+    if (currentView === 'dayGridMonth') {
+      info.view.calendar.changeView('timeGridDay', clickedDay);
+      enableEventClicks()
+    }
 
-    // Store State Data
-    setEventsForDate(filteredEvents);
-    setClickedDate(clickedDay)
-    
-    // Prevent Modal Closing for .5 Seconds
-    if (lockTimeout) clearTimeout(lockTimeout); 
-    const timeoutId = setTimeout(() => {setIsModalLocked(false);}, 500); 
-    setLockTimeout(timeoutId); 
+    // Set Day View Click to Open Event Form Modal
+    else if (currentView === 'timeGridDay') {
+      openModal();
+    }
   };
 
-  const closeModal = () => {
-    if (isModalLocked) 
-    return; setIsModalOpen(false);
+  function eventClick(info) {
+    const eventDetails = {
+      title: info.event.title,
+      address: info.event.extendedProps.address,
+      cost: info.event.extendedProps.cost,
+      start: info.event.start,
+      end: info.event.end,
+    };
+    setClickedEventData(eventDetails); // Pass event data to state
+    setIsModalOpen(true); // Open modal
+  }
+
+  function openModal () {
+    setIsModalOpen(true);
+    setCanCloseModal(false);
+    setTimeout(() => setCanCloseModal(true), 300);
+    console.log("OPENING Modal")
+  };
+
+  function closeModal () {
+    if (!canCloseModal) return;
+    setIsModalOpen(false);
+    setClickedEventData(null);
+    setTimeout(() => { enableEventClicks(); }, 250); 
+    console.log("CLOSING Modal")
   };
 
   const handleOverlayClick = (e) => {
@@ -73,27 +61,103 @@ function Calendar() {
     if (!modalContent) {closeModal();}
   };
 
+  function enableEventClicks () {
+    const events = document.querySelectorAll('.fc-event');
+    events.forEach(event => {event.style.pointerEvents = 'auto';});
+  }
+
+  // Event data
+  const events = [
+    {
+      title: 'Window Cleaning - Home',
+      address: '123 Maple St, Springfield, IL',
+      cost: 150,
+      start: '2025-04-10T09:00:00',
+      end: '2025-04-10T11:00:00',
+    },
+    {
+      title: 'Pressure Washing - Office Building',
+      address: '456 Oak Ave, Springfield, IL',
+      cost: 300,
+      start: '2025-04-11T10:30:00',
+      end: '2025-04-11T13:00:00',
+    },
+    {
+      title: 'Miscellaneous Cleaning - Warehouse',
+      address: '789 Pine Rd, Springfield, IL',
+      cost: 200,
+      start: '2025-04-12T08:00:00',
+      end: '2025-04-12T10:00:00',
+    },
+    {
+      title: 'Window Cleaning - Condo',
+      address: '321 Birch Blvd, Springfield, IL',
+      cost: 100,
+      start: '2025-04-13T14:00:00',
+      end: '2025-04-13T16:00:00',
+    },
+    {
+      title: 'Pressure Washing - Patio',
+      address: '654 Cedar Dr, Springfield, IL',
+      cost: 120,
+      start: '2025-04-14T11:00:00',
+      end: '2025-04-14T12:30:00',
+    },
+    {
+      title: 'Gutter Cleaning - Garage',
+      address: '111 Elm St, Springfield, IL',
+      cost: 90,
+      start: '2025-04-10T10:30:00', 
+      end: '2025-04-10T12:00:00',
+    },
+    {
+      title: 'Roof Inspection',
+      address: '222 Walnut St, Springfield, IL',
+      cost: 180,
+      start: '2025-04-11T08:00:00', 
+      end: '2025-04-11T09:30:00',
+    },
+    {
+      title: 'Deck Cleaning',
+      address: '333 Cherry Ln, Springfield, IL',
+      cost: 140,
+      start: '2025-04-12T14:00:00',
+      end: '2025-04-12T15:30:00',
+    },
+  ];
+
+
+
+
+
+
   return (
     <div>
 
-      {/* Render in the Calendar from FullCalendarJS */}
       <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         events={events}
-        eventClick={calendarClick}
-        dateClick={calendarClick}/>
+        eventClick={eventClick}
+        dateClick={calendarClick}
+        headerToolbar={{
+          left: 'prev,next,today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay',
+        }}
+      />
 
-      {/* Conditionally render the EventModal */}
-      {isModalOpen && (
-        <EventModal 
-            closeModal={closeModal} 
-            handleOverlayClick={handleOverlayClick}
-            events={eventsForDate}
-            date={clickedDate}/>)}
-            
+      {isModalOpen && 
+        <TestModal 
+          closeModal={closeModal}
+          handleOverlayClick={handleOverlayClick}
+          eventData={clickedEventData}
+          />
+      }
+          
+
     </div>
   );
-};
+}
 
-export default Calendar;
+export default MyCalendar;
