@@ -7,14 +7,15 @@ function EventModal({
   closeModal, 
   handleOverlayClick, 
   eventData, 
-  date, 
-  startTime, 
-  calendarRef, 
-  refreshCalendar, 
+  startTime,  
   updateEvents,
   setDatabaseEvents,
+  calendarRef
   }) {
 
+  if (eventData) 
+    console.log(eventData.id)
+  
   // Set default end time through startTime
   const calculateEndTime = (startTime) => {
     const format = new Date(startTime);
@@ -55,6 +56,32 @@ function EventModal({
     misc: !!eventData?.miscCost,
   });
 
+  // UseEffect to ensure eventData is being updated, thus updating the state.
+  useEffect(() => {
+    if (eventData) {
+      setFormData({
+        name: eventData.title || '',
+        address: eventData.address || '',
+        phone: eventData.phone || '',
+        start_time: eventData.start || startTime || '',
+        end_time: eventData.end || calculateEndTime(startTime) || '',
+        windows_cost: eventData.windowsCost || '',
+        windows_notes: eventData.windowsNotes || '',
+        pressure_washing_cost: eventData.pressureWashingCost || '',
+        pressure_washing_notes: eventData.pressureWashingNotes || '',
+        misc_cost: eventData.miscCost || '',
+        misc_notes: eventData.miscNotes || '',
+        email: eventData.email || '',
+        notes: eventData.description || '',
+        event_color: eventData.color || getUserColor(user?.user_id) || '',
+        event: eventData.id || '',
+        windows: !!eventData.windowsCost,
+        pressureWashing: !!eventData.pressureWashingCost,
+        misc: !!eventData.miscCost,
+      });
+    }
+  }, [eventData]);
+
   // Constantly update state so it's always ready for submission
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,6 +93,14 @@ function EventModal({
     const { name, checked } = e.target;
     setFormData((prev) => ({ ...prev, [name]: checked }));
   };
+
+  const clearAndReloadEvents = () => {
+    closeModal();
+    setDatabaseEvents(null);
+    updateEvents();
+    calendarRef.current?.getApi().changeView('dayGridMonth');
+  };
+
 
   // Create & Update event in database 
   const handleSubmit = async (e) => {
@@ -83,10 +118,7 @@ function EventModal({
 
           // Successful Response (200 or 201)
           if (response.status === 200 || response.status === 201) {
-              closeModal();
-              updateEvents();
-              setDatabaseEvents(null);
-              window.location.href = 'http://localhost:5173/calendar';
+              clearAndReloadEvents();
               console.log('Data sent successfully:', response.data);
             } 
 
@@ -110,11 +142,11 @@ function EventModal({
             // Successful Response (200 or 204)
             if (response.status === 200) 
               {console.log('Data sent successfully!', response.data);
-                refreshCalendar();} 
+                clearAndReloadEvents();} 
               
             else if (response.status === 204) 
               {console.log('Data sent successfully! No response given');
-                refreshCalendar();} 
+                clearAndReloadEvents();} 
 
             // Show errors on bad response
             else 
@@ -128,6 +160,9 @@ function EventModal({
     else 
       {console.log("No valid token found")}
   };
+
+
+
 
   // Delete event from database
   const handleDeleteEvent = async () => {
@@ -143,13 +178,7 @@ function EventModal({
 
         // On successful response (204 or 200)
         if (response.status === 204 || response.status === 200) {
-          refreshCalendar();
-          closeModal();
-          // Optional: Re-initialize to the main monthly view of the calendar
-          const calendarApi = calendarRef.current?.getApi();
-          if (calendarApi) {
-            calendarApi.changeView('dayGridMonth'); // Reset to month view
-          }
+          clearAndReloadEvents();
           console.log("Successful Delete")
         } 
         // Show errors on bad response
@@ -165,11 +194,14 @@ function EventModal({
       {console.log("No Valid Token Found")}
   };
 
+
+
+
+
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <form onSubmit={handleSubmit}> 
-          <div>{date}</div>  
           <div><label>Name:</label><input type="text" name="name" value={formData.name} onChange={handleChange} /></div>
           <div><label>Address:</label><input type="text" name="address" value={formData.address} onChange={handleChange} /></div>
           <div><label>Phone:</label><input type="text" name="phone" value={formData.phone} onChange={handleChange} /></div>

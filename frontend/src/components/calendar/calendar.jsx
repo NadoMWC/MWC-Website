@@ -9,72 +9,49 @@ import axiosInstance from '../../api/axiosInstance.js'
 
 function MyCalendar() {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [canCloseModal, setCanCloseModal] = useState(true);
   const [clickedEventData, setClickedEventData] = useState(null);
   const [databaseEvents, setDatabaseEvents] = useState(null);
   const [clickedTime, setClickedTime] = useState(null);
-  const [date, setDate] = useState(null);
-  const [clickBlock, setClickBlock] = useState(false);
 
   const calendarRef = useRef(null);
-  const refreshCalendar = () => {
-    const calendarApi = calendarRef.current?.getApi();
-    if (calendarApi) 
-      {calendarApi.refetchEvents();}
-  };
 
   // Handle date clicks (switch to day view from month view)
   const calendarClick = (info) => {
-    // Prevent further clicks if clickBlock is active
-    if (clickBlock) {
-      return;
-    }
-  
-    // Block clicks temporarily for 0.3 seconds after the action
-    setClickBlock(true);
-    
     const clickedDay = info.dateStr;
     const currentView = info.view.type;
-    setDate(clickedDay.split('T')[0]);
   
     // If in Month View, Clicks will activate Day View & Enable Event Clicks
     if (currentView === 'dayGridMonth') {
       info.view.calendar.changeView('timeGridDay', clickedDay);
+      enableEventClicks();
     }
   
     // Set Day View Click to Open Event Form Modal
     else if (currentView === 'timeGridDay') {
-      enableEventClicks();
       const timeClicked = info.dateStr.slice(0, -6);
       setClickedTime(timeClicked);
       openModal();
     }
-  
-    // Unblock clicks after 0.3 seconds
-    setTimeout(() => {
-      setClickBlock(false);
-    }, 300); // 0.3 seconds
   };
 
   function eventClick(info) {
-    const eventId = info.event.id;
-    const eventData = databaseEvents[eventId-1]; // Subtract 1 to Index Properly
-    setClickedEventData(eventData);
-    setIsModalOpen(true);
-  }
+    const clickedId = parseInt(info.event.id, 10);
+    const foundEvent = databaseEvents.find(event => event.id === clickedId);
+    setClickedEventData(foundEvent);
+    openModal();
+    console.log(clickedId)
+  };
 
   function openModal () {
     setIsModalOpen(true);
-    setCanCloseModal(false);
-    setTimeout(() => setCanCloseModal(true), 300);
-    console.log("OPENING Modal")
+    console.log("OPENING Modal");
   };
 
   function closeModal () {
-    if (!canCloseModal) return;
+    setClickedEventData(null)
+    setClickedTime(null);
     setIsModalOpen(false);
-    setClickedEventData(null);
-    console.log("CLOSING Modal")
+    console.log("CLOSING Modal");
   };
 
   const handleOverlayClick = (e) => {
@@ -85,7 +62,7 @@ function MyCalendar() {
   function enableEventClicks () {
     const events = document.querySelectorAll('.fc-event');
     events.forEach(event => {event.style.pointerEvents = 'auto';});
-  }
+  };
 
   const fetchAndSetEvents = async () => {
     const token = localStorage.getItem('access_token');
@@ -133,11 +110,11 @@ function MyCalendar() {
 
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        ref={calendarRef}
         initialView="dayGridMonth"
         events={databaseEvents}
         eventClick={eventClick}
         dateClick={calendarClick}
+        ref={calendarRef}
         headerToolbar={{
           left: 'prev,next,today',
           center: 'title',
@@ -150,10 +127,8 @@ function MyCalendar() {
           closeModal={closeModal}
           handleOverlayClick={handleOverlayClick}
           eventData={clickedEventData}
-          date={date}
           startTime={clickedTime}
           calendarRef={calendarRef}
-          refreshCalendar={refreshCalendar}
           updateEvents={fetchAndSetEvents}
           setDatabaseEvents={setDatabaseEvents}
         />
