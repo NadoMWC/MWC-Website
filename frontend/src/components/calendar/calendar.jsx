@@ -4,41 +4,63 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import TestModal from './testmodal.jsx'
+import EventModal from './eventmodal.jsx'
+import axiosInstance from '../../api/axiosInstance.js'
 
 function MyCalendar() {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [canCloseModal, setCanCloseModal] = useState(false);
+  const [canCloseModal, setCanCloseModal] = useState(true);
   const [clickedEventData, setClickedEventData] = useState(null);
+  const [databaseEvents, setDatabaseEvents] = useState(null);
+  const [clickedTime, setClickedTime] = useState(null);
+  const [date, setDate] = useState(null);
+  const [clickBlock, setClickBlock] = useState(false);
 
+  const calendarRef = useRef(null);
+  const refreshCalendar = () => {
+    const calendarApi = calendarRef.current?.getApi();
+    if (calendarApi) 
+      {calendarApi.refetchEvents();}
+  };
 
   // Handle date clicks (switch to day view from month view)
   const calendarClick = (info) => {
+    // Prevent further clicks if clickBlock is active
+    if (clickBlock) {
+      return;
+    }
+  
+    // Block clicks temporarily for 0.3 seconds after the action
+    setClickBlock(true);
+    
     const clickedDay = info.dateStr;
     const currentView = info.view.type;
+    setDate(clickedDay.split('T')[0]);
   
     // If in Month View, Clicks will activate Day View & Enable Event Clicks
     if (currentView === 'dayGridMonth') {
       info.view.calendar.changeView('timeGridDay', clickedDay);
-      enableEventClicks()
     }
-
+  
     // Set Day View Click to Open Event Form Modal
     else if (currentView === 'timeGridDay') {
+      enableEventClicks();
+      const timeClicked = info.dateStr.slice(0, -6);
+      setClickedTime(timeClicked);
       openModal();
     }
+  
+    // Unblock clicks after 0.3 seconds
+    setTimeout(() => {
+      setClickBlock(false);
+    }, 300); // 0.3 seconds
   };
 
   function eventClick(info) {
-    const eventDetails = {
-      title: info.event.title,
-      address: info.event.extendedProps.address,
-      cost: info.event.extendedProps.cost,
-      start: info.event.start,
-      end: info.event.end,
-    };
-    setClickedEventData(eventDetails); // Pass event data to state
-    setIsModalOpen(true); // Open modal
+    const eventId = info.event.id;
+    const eventData = databaseEvents[eventId-1]; // Subtract 1 to Index Properly
+    setClickedEventData(eventData);
+    setIsModalOpen(true);
   }
 
   function openModal () {
@@ -52,7 +74,6 @@ function MyCalendar() {
     if (!canCloseModal) return;
     setIsModalOpen(false);
     setClickedEventData(null);
-    setTimeout(() => { enableEventClicks(); }, 250); 
     console.log("CLOSING Modal")
   };
 
@@ -66,78 +87,55 @@ function MyCalendar() {
     events.forEach(event => {event.style.pointerEvents = 'auto';});
   }
 
-  // Event data
-  const events = [
-    {
-      title: 'Window Cleaning - Home',
-      address: '123 Maple St, Springfield, IL',
-      cost: 150,
-      start: '2025-04-10T09:00:00',
-      end: '2025-04-10T11:00:00',
-    },
-    {
-      title: 'Pressure Washing - Office Building',
-      address: '456 Oak Ave, Springfield, IL',
-      cost: 300,
-      start: '2025-04-11T10:30:00',
-      end: '2025-04-11T13:00:00',
-    },
-    {
-      title: 'Miscellaneous Cleaning - Warehouse',
-      address: '789 Pine Rd, Springfield, IL',
-      cost: 200,
-      start: '2025-04-12T08:00:00',
-      end: '2025-04-12T10:00:00',
-    },
-    {
-      title: 'Window Cleaning - Condo',
-      address: '321 Birch Blvd, Springfield, IL',
-      cost: 100,
-      start: '2025-04-13T14:00:00',
-      end: '2025-04-13T16:00:00',
-    },
-    {
-      title: 'Pressure Washing - Patio',
-      address: '654 Cedar Dr, Springfield, IL',
-      cost: 120,
-      start: '2025-04-14T11:00:00',
-      end: '2025-04-14T12:30:00',
-    },
-    {
-      title: 'Gutter Cleaning - Garage',
-      address: '111 Elm St, Springfield, IL',
-      cost: 90,
-      start: '2025-04-10T10:30:00', 
-      end: '2025-04-10T12:00:00',
-    },
-    {
-      title: 'Roof Inspection',
-      address: '222 Walnut St, Springfield, IL',
-      cost: 180,
-      start: '2025-04-11T08:00:00', 
-      end: '2025-04-11T09:30:00',
-    },
-    {
-      title: 'Deck Cleaning',
-      address: '333 Cherry Ln, Springfield, IL',
-      cost: 140,
-      start: '2025-04-12T14:00:00',
-      end: '2025-04-12T15:30:00',
-    },
-  ];
+  const fetchAndSetEvents = async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      setError('No valid token found. Please log in again.');
+      return;
+    }
+  
+    try {
+      const response = await axiosInstance.get('http://127.0.0.1:8000/api/calendar/view_events/', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      const transformedEvents = response.data.map(event => ({
+        id: event.id,
+        title: event.name,
+        address: event.address,
+        phone: event.phone,
+        start: event.start_time ? event.start_time.replace('Z', '') : null,
+        end: event.end_time ? event.end_time.replace('Z', '') : null,
+        windowsCost: event.windows_job.windows_cost,
+        windowsNotes: event.windows_job.windows_notes,
+        pressureWashingCost: event.pressure_job.pressure_washing_cost,
+        pressureWashingNotes: event.pressure_job.pressure_washing_notes,
+        miscCost: event.misc_job.misc_cost,
+        miscNotes: event.misc_job.misc_notes,
+        email: event.email,
+        description: event.notes,
+        color: event.event_color,
+      }));
+  
+      setDatabaseEvents(transformedEvents);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      setError('Failed to fetch events. Please try again later.');
+    }
+  };
 
-
-
-
-
+  useEffect(() => {
+    fetchAndSetEvents();
+  }, []);
 
   return (
     <div>
 
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        ref={calendarRef}
         initialView="dayGridMonth"
-        events={events}
+        events={databaseEvents}
         eventClick={eventClick}
         dateClick={calendarClick}
         headerToolbar={{
@@ -148,14 +146,19 @@ function MyCalendar() {
       />
 
       {isModalOpen && 
-        <TestModal 
+        <EventModal 
           closeModal={closeModal}
           handleOverlayClick={handleOverlayClick}
           eventData={clickedEventData}
-          />
+          date={date}
+          startTime={clickedTime}
+          calendarRef={calendarRef}
+          refreshCalendar={refreshCalendar}
+          updateEvents={fetchAndSetEvents}
+          setDatabaseEvents={setDatabaseEvents}
+        />
       }
           
-
     </div>
   );
 }

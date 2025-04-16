@@ -1,9 +1,9 @@
 
 export function logout(navigate, setUser) {
-  setUser(null);
+  navigate('/login');
   localStorage.removeItem('access_token');
   localStorage.removeItem('refresh_token');
-  navigate('/login');
+  setUser(null);
 }
 
 export default logout;

@@ -17,7 +17,9 @@ function Testing() {
 
   const { user } = useAuth();
   useEffect(() => {
-    console.log('User data:', user.user_id);
+    if (user && user.user_id) {
+      console.log('User data:', user.user_id);
+    }
   }, [user]);
 
  // Fetch events from the API when the component mounts

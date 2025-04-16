@@ -3,21 +3,53 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from .models import CalendarData
-from .serializers import CalendarSerializer
+from .models import *
+from .serializers import *
 
 
-##**<< CREATE EVENTS >>**##
+# Create Events
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def create_events(request):
     if request.method == 'POST':
-        serializer = CalendarSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        calendar_data = {
+            "name": request.data.get("name"),
+            "address": request.data.get("address"),
+            "phone": request.data.get("phone"),
+            "email": request.data.get("email"),
+            "start_time": request.data.get("start_time"),
+            "end_time": request.data.get("end_time"),
+            "notes": request.data.get("notes"),
+            "event_color": request.data.get("event_color"),
+        }
+
+        calendar_serializer = CreateCalendarSerializer(data=calendar_data)
+
+        if calendar_serializer.is_valid():
+            calendar_event = calendar_serializer.save()
+
+            WindowsJobs.objects.create(
+                event=calendar_event,
+                windows_cost=request.data.get("windows_cost"),
+                windows_notes=request.data.get("windows_notes")
+            )
+
+            PressureWashingJobs.objects.create(
+                event=calendar_event,
+                pressure_washing_cost=request.data.get("pressure_washing_cost"),
+                pressure_washing_notes=request.data.get("pressure_washing_notes")
+            )
+
+            MiscJobs.objects.create(
+                event=calendar_event,
+                misc_cost=request.data.get("misc_cost"),
+                misc_notes=request.data.get("misc_notes")
+            )
+
+            return Response(calendar_serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(calendar_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 ##**<< VIEW/FETCH EVENTS >>**##
@@ -25,28 +57,52 @@ def create_events(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def view_events(request):
-    event = CalendarData.objects.all()
-    serializer = CalendarSerializer(event, many=True)
+    events = CalendarEvents.objects.all()
+    serializer = ViewCalendarSerializer(events, many=True)
     return Response(serializer.data)
 
 
-##**<< UPDATE EVENTS >>**##
 @api_view(['PUT'])
-@authentication_classes([JWTAuthentication])  
-@permission_classes([IsAuthenticated])  
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def update_events(request, pk):
-    # Fetch UID/Primary Key(PK) to identify row to update
     try:
-        event = CalendarData.objects.get(pk=pk)
-    except CalendarData.DoesNotExist:
+        main_event = CalendarEvents.objects.get(pk=pk)
+        windows_event = WindowsJobs.objects.get(pk=pk)
+        pressure_wash_event = PressureWashingJobs.objects.get(pk=pk)
+        misc_event = MiscJobs.objects.get(pk=pk)
+    except CalendarEvents.DoesNotExist:
         return Response({'error': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    event_info_serializer = UpdateCalendarSerializer(main_event, data=request.data)
+    windows_serializer = WindowsJobsSerializer(windows_event, data=request.data)
+    pressure_wash_serializer = PressureWashingJobsSerializer(pressure_wash_event, data=request.data)
+    misc_serializer = MiscJobsSerializer(misc_event, data=request.data)
 
-    # Pass UID/PK to serializer to update row
-    serializer = CalendarSerializer(event, data=request.data)
-    if serializer.is_valid():
-        serializer.save()  # Save the updated event
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    valid_event = event_info_serializer.is_valid()
+    valid_windows = windows_serializer.is_valid()
+    valid_pressure_wash = pressure_wash_serializer.is_valid()
+    valid_misc = misc_serializer.is_valid()
+
+    if valid_event and valid_windows and valid_pressure_wash and valid_misc:
+        event_info_serializer.save()
+        windows_serializer.save()
+        pressure_wash_serializer.save()
+        misc_serializer.save()
+        return Response({'message': 'All Data updated successfully.'}, status=status.HTTP_200_OK)
+
+    # If validation failed for any, return errors
+    errors = {}
+    if not valid_event:
+        errors['calendar_event'] = event_info_serializer.errors
+    if not valid_windows:
+        errors['windows'] = windows_serializer.errors
+    if not valid_pressure_wash:
+        errors['pressure_wash'] = pressure_wash_serializer.errors
+    if not valid_misc:
+        errors['misc'] = misc_serializer.errors
+    
+    return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 ##**<< DELETE EVENTS >>**##
@@ -54,11 +110,9 @@ def update_events(request, pk):
 @authentication_classes([JWTAuthentication])  
 @permission_classes([IsAuthenticated])  
 def delete_events(request, pk):
-    # Fetch UID/Primary Key(PK) to identify row to update
     try:
-        event = CalendarData.objects.get(pk=pk)  # Fetch the event by ID (pk)
-    except CalendarData.DoesNotExist:
-        return Response({'error': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
-    # Delete the instance(Row of Data) that was retrieved through the PK
-    event.delete()
-    return Response({'message': 'Event deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+        event = CalendarEvents.objects.get(pk=pk)
+        event.delete()
+        return Response({'message': 'Event and all related jobs deleted successfully.'}, status=status.HTTP_200_OK)
+    except CalendarEvents.DoesNotExist:
+        return Response({'error': 'Event not found.'}, status=status.HTTP_404_NOT_FOUND)
