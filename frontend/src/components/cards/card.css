@@ -1,0 +1,36 @@
+
+.card {
+    background-color: rgb(27, 27, 60);
+    border: 2px solid rgb(169, 151, 13);
+    border-radius: 10px;
+    box-shadow: 5px 5px 20px rgb(133, 133, 43);
+    text-align: center;
+    padding: 5px;
+    margin: 5px;
+    width: 100px;
+    height: 150px;
+    display: inline-block;
+}
+
+.star-image {
+    border-radius: 50%;
+    box-shadow: 5px 5px 20px rgb(214, 214, 83);
+    width: 80%;
+    height: 65%;
+    padding: 1.5px 0;
+}
+
+.message {
+    color: rgb(219, 239, 248);
+    font-size: 11px;
+}
+
+.feature-name {
+    color: rgb(211, 217, 220);
+    font-size: 130%;
+}
+
+.icons .check {
+    color: green;
+    font-size: 30px;
+}

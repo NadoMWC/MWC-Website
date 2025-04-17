@@ -56,7 +56,7 @@ function EventModal({
     misc: !!eventData?.miscCost,
   });
 
-  // UseEffect to ensure eventData is being updated, thus updating the state.
+  // UseEffect to update state for eventData 
   useEffect(() => {
     if (eventData) {
       setFormData({

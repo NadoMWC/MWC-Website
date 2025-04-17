@@ -23,6 +23,11 @@
   z-index: 1001;
 }
 
-.fc-event {
+/* .fc-event {
+  pointer-events: none;
+} */
+
+/* Disable pointer events only in month view */
+.fc-dayGridMonth-view .fc-event {
   pointer-events: none;
 }

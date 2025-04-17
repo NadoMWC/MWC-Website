@@ -14,6 +14,78 @@ function MyCalendar() {
   const [clickedTime, setClickedTime] = useState(null);
 
   const calendarRef = useRef(null);
+  const suppressClickRef = useRef(false);
+
+  useEffect(() => {
+    const calendarEl = document.getElementById('calendar');
+    let startX = 0;
+    let endX = 0;
+  
+    const handleTouchStart = (e) => {
+      startX = e.changedTouches[0].screenX;
+    };
+  
+    const handleTouchEnd = (e) => {
+      endX = e.changedTouches[0].screenX;
+      handleGesture();
+    };
+  
+    const handleMouseDown = (e) => {
+      startX = e.screenX;
+    };
+  
+    const handleMouseUp = (e) => {
+      endX = e.screenX;
+      handleGesture();
+    };
+  
+    const handleGesture = () => {
+      const swipeThreshold = 50;
+      const api = calendarRef.current?.getApi();
+  
+      const isSwipe = Math.abs(endX - startX) > swipeThreshold;
+  
+      if (isSwipe) {
+        suppressClickRef.current = true;
+  
+        setTimeout(() => {
+          suppressClickRef.current = false;
+        }, 500); // Disable clicks for 0.5s
+  
+        if (endX < startX - swipeThreshold) {
+          api?.next();
+        } else if (endX > startX + swipeThreshold) {
+          api?.prev();
+        }
+      }
+    };
+  
+    const suppressClick = (e) => {
+      if (suppressClickRef.current) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    };
+  
+    document.addEventListener('click', suppressClick, true); // use capture phase
+  
+    calendarEl.addEventListener('touchstart', handleTouchStart);
+    calendarEl.addEventListener('touchend', handleTouchEnd);
+    calendarEl.addEventListener('mousedown', handleMouseDown);
+    calendarEl.addEventListener('mouseup', handleMouseUp);
+  
+    return () => {
+      document.removeEventListener('click', suppressClick, true);
+      calendarEl.removeEventListener('touchstart', handleTouchStart);
+      calendarEl.removeEventListener('touchend', handleTouchEnd);
+      calendarEl.removeEventListener('mousedown', handleMouseDown);
+      calendarEl.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+  
+  
+  
+  
 
   // Handle date clicks (switch to day view from month view)
   const calendarClick = (info) => {
@@ -23,7 +95,6 @@ function MyCalendar() {
     // If in Month View, Clicks will activate Day View & Enable Event Clicks
     if (currentView === 'dayGridMonth') {
       info.view.calendar.changeView('timeGridDay', clickedDay);
-      enableEventClicks();
     }
   
     // Set Day View Click to Open Event Form Modal
@@ -57,11 +128,6 @@ function MyCalendar() {
   const handleOverlayClick = (e) => {
     const modalContent = e.target.closest('.modal-content');
     if (!modalContent) {closeModal();}
-  };
-
-  function enableEventClicks () {
-    const events = document.querySelectorAll('.fc-event');
-    events.forEach(event => {event.style.pointerEvents = 'auto';});
   };
 
   const fetchAndSetEvents = async () => {
@@ -106,7 +172,7 @@ function MyCalendar() {
   }, []);
 
   return (
-    <div>
+    <div id="calendar">
 
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
