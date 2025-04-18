@@ -13,10 +13,13 @@ function Dashboard() {
         <div>
             <h1>Features</h1>
                 <Cards />
+
             <h1>Company Information</h1>
                 <CompanyInformation />
+
             <h1>Dashboard Analytics</h1>
                 <Analytics />
+                
             <h1>User Settings</h1>
                 <Settings />
         </div>

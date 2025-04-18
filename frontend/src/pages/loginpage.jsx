@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx'
 import axios from 'axios';
+import MWC_Image from './login_mwc_image.png'
 import './loginpage.css'
 
 const LoginPage = () => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loginErrorMessage, setLoginErrorMessage] = useState(false)
 
-  // Call useAuth Hook to use for login to store user state
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -24,39 +25,54 @@ const LoginPage = () => {
       localStorage.setItem('access_token', access);  // STORE ACCESS TOKEN
       localStorage.setItem('refresh_token', refresh);  // STORE REFRESH TOKEN
       login(access);  // STORE USER LOGIN INFO IN STATE FOR PERMISSIONS
-      navigate('/dashboard');}
+      navigate('/dashboard');
+      setLoginErrorMessage(false);
+    }
 
-      catch (err) 
-        {if (err.tokens) 
-            {console.log('❌ Error:', err.tokens.data.message);} 
-          else {console.error('⚠️ Request failed:', err.message);}}
+    catch (err) {
+      setLoginErrorMessage(true);
+      if (err.tokens) {
+        console.log('❌ Error:', err.tokens.data.message);
+      } 
+      else {
+        console.error('⚠️ Request failed:', err.message);
+      }
+    }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-80">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+    <div className="login-container">
+      <form onSubmit={handleSubmit} className="form-login-container">
+        <img src={MWC_Image} alt="MWC_Logo" className="login-mwc-image" />
+        <div className="welcome-message">Web App</div>
         
         <input
+          className='login-username-field'
           type="username"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full mb-4 p-2 border rounded"
           required/>
 
         <input
+          className='login-password-field'
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full mb-4 p-2 border rounded"
           required/>
 
         <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition">
+          className='login-button'
+          type="submit">
           Login</button>
+
+        {loginErrorMessage && (
+          <div className='login-error'>
+            *Login Error* - Try again or contact Drew 
+          </div>
+          )
+        }
 
       </form>
     </div>
