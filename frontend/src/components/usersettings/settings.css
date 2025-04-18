@@ -1,0 +1,56 @@
+
+.settings-container {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.colors-container {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.colors {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.defaults-container {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.defaults {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.notifications-container {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.notifications {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}

@@ -1,0 +1,72 @@
+
+.analytics {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.piechart-container {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.piechart {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.linechart-container {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.linechart {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.stats-container {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.stats {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.barchart-container {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.barchart {
+    border: 2px solid green;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}

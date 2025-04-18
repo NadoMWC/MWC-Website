@@ -1,0 +1,105 @@
+
+.company-information {
+    border: 2px solid rgb(6, 154, 23);
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+
+.inspirational-words-container {
+    border: 2px solid rgb(6, 154, 23);
+    background-color: blue;
+    text-align: center;
+    color: white;
+    height: fit-content;
+    width: fit-content;
+    display: inline-block;
+    padding: 5px 5px; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.inspirational-words {
+    border: 2px solid rgb(6, 154, 23);
+    background-color: black;
+    height: 120%;
+    width: fit-content;
+    font-size: 30px;
+    padding: 5px 5px; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.weekly-quote {
+    border: 2px solid rgb(6, 154, 23);
+    background-color: black;
+    height: 120%;
+    width: fit-content;
+    justify-content: center;
+    font-size: 18px;
+    padding: 5px 5px; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.reviews {
+    font-size: 20px;
+    width: 99%;
+    height: 200px;
+    border: 2px solid rgb(6, 154, 23);
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px 5px;
+    justify-content: center;
+    text-align: center;
+}
+
+.reviews-container {
+    padding: 5px 5px;
+    justify-content: center;
+}
+
+.weather {
+    font-size: 30px;
+    border: 2px solid rgb(6, 154, 23);
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.weather-container {
+    border: 2px solid rgb(6, 154, 23);
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.news {
+    font-size: 30px;
+    border: 2px solid rgb(6, 154, 23);
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.news-container {
+    border: 2px solid rgb(6, 154, 23);
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.merchandise {
+    font-size: 30px;
+    border: 2px solid rgb(6, 154, 23);
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
+
+.merchandise-container {
+    border: 2px solid rgb(6, 154, 23);
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 5px;
+    margin: 5px 5px;
+}
