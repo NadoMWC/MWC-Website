@@ -1,0 +1,50 @@
+
+.navbar {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    height: 60px; 
+    z-index: 1000;
+}
+
+.navlinks {
+    background-color: rgb(203, 187, 187);
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 30px;
+    position: absolute;
+    bottom: 0;
+    z-index: 1;
+}
+
+.show-navbar-button {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 32px;
+    z-index: 2;
+    background-color: lightgray;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.show-navbar-button.up {
+    transform: translateY(-30px); 
+}
+
+.dash-link {
+    font-size: 15px;
+    border: 2px solid green;
+    padding: 5px 5px;
+    margin: 5px;
+}
+
+.navbar-logout-button {
+    border: 2px solid green;
+    padding: 5px 5px;
+    margin: 5px;
+}
+
