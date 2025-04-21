@@ -182,9 +182,17 @@ function MyCalendar() {
         dateClick={calendarClick}
         ref={calendarRef}
         headerToolbar={{
-          left: 'prev,next,today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay',
+          left: 'title',
+          center: 'searchBarPlaceHolder',
+          right: 'dayGridMonth,prev,next',
+        }}
+        customButtons={{
+          searchBarPlaceHolder: {
+            text: 'Searchbar Placeholder',
+            click: function () {
+              console.log('Searchbar Placeholder clicked!');
+            },
+          },
         }}
       />
 

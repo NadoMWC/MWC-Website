@@ -5,23 +5,15 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
 function Testing() {
-  const calendarRef = useRef(null);
 
   const handleDateClick = (info) => {
     console.log("Hello");
   };
 
-  useEffect(() => {
-    const calendarApi = calendarRef.current?.getApi();
-    if (calendarApi) {
-      calendarApi.setOption('height', 700); // Set height dynamically
-    }
-  }, []);
-
   return (
-    <div className='testing-calendar'>
+    <div className='testing-calendar-container'>
       <FullCalendar
-        ref={calendarRef}
+        className='testing-calendar'
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         eventClick={handleDateClick} 

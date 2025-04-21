@@ -12,7 +12,7 @@ function App() {
 
   return (
     <div>
-      {!hideComponent && <Navbar />}
+      {/* {!hideComponent && <Navbar />} */}
         <div>
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
@@ -24,7 +24,6 @@ function App() {
             </Route>
           </Routes>
         </div>
-      {!hideComponent && <Footer />}
     </div>
   );
 };

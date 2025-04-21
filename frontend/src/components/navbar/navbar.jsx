@@ -12,21 +12,17 @@ function Navbar () {
 
     return (
         <div className='navbar'>
-            <button 
-                className={`show-navbar-button ${hideNavbar ? 'up' : ''}`} 
-                onClick={() => setHideNavbar(prev => !prev)}
-            >
-                {hideNavbar ? '⬇️' : '⬆️'}
+            <button className={`show-navbar-button ${hideNavbar ? 'up' : ''}`} 
+                    onClick={() => setHideNavbar(prev => !prev)}>
+                    {hideNavbar ? '⬇️' : '⬆️'}
             </button>
             
             <nav className='navlinks'>
-                <Link to="/dashboard" className='dash-link'>Dashboard</Link>
+                <Link to="/dashboard" className='dash-link'>Home</Link>
                 <Link to="/calendar" className='dash-link'>Calendar</Link>
                 <Link to="/testing" className='dash-link'>Testing</Link>
-                <button 
-                    className='navbar-logout-button' 
-                    onClick={() => logout(navigate, setUser)}
-                >
+                <button className='navbar-logout-button' 
+                        onClick={() => logout(navigate, setUser)}>
                     Logout
                 </button>
             </nav>
