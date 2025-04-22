@@ -12,6 +12,7 @@ function MyCalendar() {
   const [clickedEventData, setClickedEventData] = useState(null);
   const [databaseEvents, setDatabaseEvents] = useState(null);
   const [clickedTime, setClickedTime] = useState(null);
+  const [freezeClicks, setFreezeClicks] = useState(false)
 
   const calendarRef = useRef(null);
   const suppressClickRef = useRef(false);
@@ -83,10 +84,6 @@ function MyCalendar() {
     };
   }, []);
   
-  
-  
-  
-
   // Handle date clicks (switch to day view from month view)
   const calendarClick = (info) => {
     const clickedDay = info.dateStr;
@@ -94,6 +91,8 @@ function MyCalendar() {
   
     // If in Month View, Clicks will activate Day View & Enable Event Clicks
     if (currentView === 'dayGridMonth') {
+      setFreezeClicks(true);
+      setTimeout(() => setFreezeClicks(false), 400);
       info.view.calendar.changeView('timeGridDay', clickedDay);
     }
   
@@ -106,6 +105,7 @@ function MyCalendar() {
   };
 
   function eventClick(info) {
+    if (freezeClicks) return;
     const clickedId = parseInt(info.event.id, 10);
     const foundEvent = databaseEvents.find(event => event.id === clickedId);
     setClickedEventData(foundEvent);
@@ -126,10 +126,7 @@ function MyCalendar() {
     console.log("CLOSING Modal");
   };
 
-  const handleOverlayClick = (e) => {
-    const modalContent = e.target.closest('.modal-content');
-    if (!modalContent) {closeModal();}
-  };
+  
 
   const fetchAndSetEvents = async () => {
     const token = localStorage.getItem('access_token');
@@ -204,7 +201,7 @@ function MyCalendar() {
       {isModalOpen && 
         <EventModal 
           closeModal={closeModal}
-          handleOverlayClick={handleOverlayClick}
+          // handleOverlayClick={handleOverlayClick}
           eventData={clickedEventData}
           startTime={clickedTime}
           calendarRef={calendarRef}
@@ -215,6 +212,6 @@ function MyCalendar() {
           
     </div>
   );
-}
+};
 
 export default MyCalendar;

@@ -2,6 +2,7 @@
 
 
 /* -----MODAL STYLING SECTION----- */
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -30,9 +31,20 @@
 
 
 /* -----CALENDAR STYLING SECTION----- */
+
 /* Disable pointer events only in month view */
 .fc-dayGridMonth-view .fc-event {
   pointer-events: none;
+}
+
+/* Make blue circle around current day number */
+.fc-day-today {
+  background-color: transparent !important;
+}
+.fc-day-today .fc-daygrid-day-number {
+  color: white;
+  background-color: rgb(31, 97, 151);
+  border-radius: 50%;
 }
 
 /* >>> Calendar Toolbar Section <<< */
@@ -56,7 +68,7 @@
   font-size: 12px;
 }
 
-/* Calendar Toolbar - Searchbar Element */
+/* Calendar Toolbar - Search bar Element */
 .fc-toolbar-chunk:nth-child(2) {
   flex-grow: 1;
   display: flex;
@@ -134,7 +146,7 @@
 /* Calendar Content - Font settings & Frame Height */
 .fc .fc-daygrid-event-harness {
   font-size: 13px;
-  font-weight: bold;
+  /* font-weight: bold; */
 }
 .fc-daygrid-day-frame {
   height: 100px;

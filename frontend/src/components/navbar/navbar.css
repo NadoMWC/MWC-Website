@@ -8,7 +8,7 @@
 }
 
 .navlinks {
-    background-color: rgb(200, 209, 219);
+    background-color: rgb(240, 240, 240);
     width: 100%;
     display: flex;
     margin: 0px;
@@ -27,8 +27,10 @@
     height: 46px;
     z-index: 2;
     margin: 0px;
-    background-color: lightgray;
+    background-color: rgb(240, 240, 240);
     border: none;
+    border-top: 2px solid rgb(151, 151, 151);;
+    border-bottom: 2px solid rgb(151, 151, 151);;
     cursor: pointer;
     transition: transform 0.3s ease-in-out;
 }

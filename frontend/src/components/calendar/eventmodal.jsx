@@ -3,18 +3,19 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../api/axiosInstance.js'
 import { useAuth } from '../../context/AuthContext.jsx';
 
-function EventModal({ 
-  closeModal, 
-  handleOverlayClick, 
-  eventData, 
-  startTime,  
-  updateEvents,
-  setDatabaseEvents,
-  calendarRef
-  }) {
+function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabaseEvents, calendarRef, }) {
+  
+  const [modalClickLock, setModalClickLock] = useState(true);
 
-  if (eventData) 
-    console.log(eventData.id)
+  useEffect(() => {
+    const timer = setTimeout(() => {setModalClickLock(false);}, 400);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleOverlayClick = (e) => {
+    if (modalClickLock) {console.log("Click ignored (overlay locked)"); return;}
+    closeModal();
+  };
   
   // Set default end time through startTime
   const calculateEndTime = (startTime) => {
@@ -201,7 +202,7 @@ function EventModal({
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <form onSubmit={handleSubmit}> 
+        <form className="form-content" style={{ pointerEvents: modalClickLock ? "none" : "auto" }} onSubmit={handleSubmit}> 
           <div><label>Name:</label><input type="text" name="name" value={formData.name} onChange={handleChange} /></div>
           <div><label>Address:</label><input type="text" name="address" value={formData.address} onChange={handleChange} /></div>
           <div><label>Phone:</label><input type="text" name="phone" value={formData.phone} onChange={handleChange} /></div>
@@ -276,7 +277,6 @@ function EventModal({
       </div>
     </div>
   );
-}
+};
 
 export default EventModal;
-

@@ -6,18 +6,12 @@ import interactionPlugin from '@fullcalendar/interaction';
 
 function Testing() {
 
-  const handleDateClick = (info) => {
-    console.log("Hello");
-  };
-
   return (
     <div className='testing-calendar-container'>
       <FullCalendar
         className='testing-calendar'
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        eventClick={handleDateClick} 
-        dateClick={handleDateClick} 
       />
     </div>
   );
@@ -26,14 +20,13 @@ function Testing() {
 export default Testing;
 
 
+  // // Print the logged in admin Users ID
+  // const { user } = useAuth();
+  // useEffect(() => {
+  //   if (user && user.user_id) {
+  //     console.log('User data:', user.user_id);
+  //   }
+  // }, [user]);
 
 
 
-
-// // Print the logged in admin Users ID
-// const { user } = useAuth();
-// useEffect(() => {
-//   if (user && user.user_id) {
-//     console.log('User data:', user.user_id);
-//   }
-// }, [user]);
