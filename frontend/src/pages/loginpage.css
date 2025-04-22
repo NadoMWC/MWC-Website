@@ -7,7 +7,6 @@
     justify-content: center; 
     height: 100vh;
     margin: -8px;
-    font-family: 'Inter', sans-serif;
     padding-top: 20px;
 }
 
@@ -20,14 +19,12 @@
     align-items: center; 
     justify-content: center; 
     width: fit-content;
-    font-family: 'Inter', sans-serif;
     margin: 5px;
     padding: 5px 5px;
 }
 
 .login-username-field {
     background-color: rgba(236, 236, 236, 0.907);
-    font-family: 'Inter', sans-serif;
     border-radius: 18px;
     margin: 5px;
     padding: 5px 5px;
@@ -38,7 +35,6 @@
 
 .login-password-field {
     background-color: rgba(236, 236, 236, 0.907);
-    font-family: 'Inter', sans-serif;
     border-radius: 18px;
     margin: 5px;
     padding: 5px 5px;
@@ -49,7 +45,6 @@
 
 .login-button {
     background-color: rgb(46, 153, 189);
-    font-family: 'Inter', sans-serif;
     font-size: 30px;
     color: white;
     border-radius: 18px;

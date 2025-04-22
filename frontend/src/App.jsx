@@ -12,7 +12,7 @@ function App() {
 
   return (
     <div>
-      {/* {!hideComponent && <Navbar />} */}
+      {!hideComponent && <Navbar />}
         <div>
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />

@@ -1,4 +1,7 @@
 
+
+
+/* -----Modal Styling Section----- */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -23,11 +26,94 @@
   z-index: 1001;
 }
 
-/* .fc-event {
-  pointer-events: none;
-} */
+
+
+/* -----Custom Styling Section----- */
 
 /* Disable pointer events only in month view */
 .fc-dayGridMonth-view .fc-event {
+  
   pointer-events: none;
+}
+
+
+
+/* -----Calendar Styling Section----- */
+
+/* -- Calendar Toolbar Nav Section-- */
+.fc .fc-toolbar .fc-button.fc-dayGridMonth-button {
+  background-color: #c97003;
+  color: rgb(207, 144, 27);
+  border-radius: 4px;
+  padding: 6px 12px;
+}
+
+/*  */
+.fc-toolbar-chunk:nth-child(2) {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+}
+
+/*  */
+.fc-toolbar-chunk:nth-child(2) .fc-button {
+  flex: 1;
+  width: 100%;
+}
+
+/* --Calendar Content Section-- */
+
+/* Center Day of Month */
+.fc .fc-daygrid-day-top {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Hide Month View Event Dot */
+.fc-daygrid-event-dot {
+  display: none;
+}
+
+/* Hide Month View Event Time */
+.fc-event-time {
+  display: none;
+}
+
+/*  */
+.fc .fc-daygrid-event-harness {
+  font-size: 13px;
+  display: inline;
+}
+
+/*  */
+.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard {
+  height: 100vh; 
+  display: flex;
+  flex-direction: column;
+}
+
+/*  */
+.fc .fc-toolbar.fc-header-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0em;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/*  */
+.fc-view-harness {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+} 
+
+/*  */
+.fc-view-harness-active {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }

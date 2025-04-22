@@ -111,6 +111,7 @@ function MyCalendar() {
     setClickedEventData(foundEvent);
     openModal();
     console.log(clickedId)
+    console.log(info)
   };
 
   function openModal () {
@@ -158,6 +159,7 @@ function MyCalendar() {
         email: event.email,
         description: event.notes,
         color: event.event_color,
+        display: 'block',
       }));
   
       setDatabaseEvents(transformedEvents);
@@ -184,11 +186,11 @@ function MyCalendar() {
         headerToolbar={{
           left: 'title',
           center: 'searchBarPlaceHolder',
-          right: 'dayGridMonth,prev,next',
+          right: 'dayGridMonth',
         }}
         customButtons={{
           searchBarPlaceHolder: {
-            text: 'Searchbar Placeholder',
+            text: 'Searchbar',
             click: function () {
               console.log('Searchbar Placeholder clicked!');
             },
