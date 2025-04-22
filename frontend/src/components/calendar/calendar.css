@@ -1,8 +1,5 @@
 
-
-
 /* -----MODAL STYLING SECTION----- */
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -15,7 +12,6 @@
   justify-content: center;
   z-index: 1000;
 }
-
 .modal-content {
   background: white;
   padding: 20px;
@@ -27,6 +23,47 @@
   z-index: 1001;
 }
 
+
+/* -----EVENT FORM STYLING SECTION----- */
+
+.form-name {}
+.form-name-input {}
+.form-address {}
+.form-addres-input {}
+.form-phone {}
+.form-phone-input {}
+.form-start-time {}
+.form-start-time-input {}
+.form-end-time {}
+.form-end-time-input {}
+
+.job-cost-type-container {}
+.form-windows {}
+.form-windows-checkbox {}
+.form-windows-inputs {}
+.form-windows-cost-input {}
+.form-windows-notes-input {}
+.form-pressure-washing {}
+.form-pressure-washing-checkbox {}
+.form-pressure-washing-inputs {}
+.form-pressure-washing-cost-input {}
+.form-pressure-washing-notes-input {}
+.form-misc-work {}
+.form-misc-work-checkbox {}
+.form-misc-work-inputs {}
+.form-misc-work-cost-input {}
+.form-misc-work-notes-input {}
+
+.form-email {}
+.form-email-input {}
+.form-notes {}
+.form-notes-input {}
+.form-color {}
+.form-color-input {}
+
+.update-or-save-button {}
+.delete-event-button {}
+.close-window-button {}
 
 
 

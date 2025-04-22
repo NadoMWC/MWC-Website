@@ -3,29 +3,53 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../api/axiosInstance.js'
 import { useAuth } from '../../context/AuthContext.jsx';
 
-function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabaseEvents, calendarRef, }) {
+// Pass in props to the Event Modal & Form
+function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabaseEvents, calendarRef }) {
   
-  const [modalClickLock, setModalClickLock] = useState(true);
+  // React hooks
+  const [modalClickLock, setModalClickLock] = useState(true); // Prevent double clicks
+  const { user } = useAuth(); // Store&access user id (Logged in user)
 
+  // On component mount, ensure no double clicks for .4 seconds
   useEffect(() => {
     const timer = setTimeout(() => {setModalClickLock(false);}, 400);
     return () => clearTimeout(timer);
   }, []);
 
+  // Close Modal if clicked outside main content area
   const handleOverlayClick = (e) => {
-    if (modalClickLock) {console.log("Click ignored (overlay locked)"); return;}
+    if (modalClickLock) {return;}
     closeModal();
   };
+
+  // Constantly update state so it's always ready for submission
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Track checkbox state changes
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: checked }));
+  };
+
+  // Ensure a clean state reset and view change
+  const clearAndReloadEvents = () => {
+    closeModal();
+    setDatabaseEvents(null);
+    updateEvents();
+    calendarRef.current?.getApi().changeView('dayGridMonth');
+  };
   
-  // Set default end time through startTime
+  // Set default end time 1hr later than startTime
   const calculateEndTime = (startTime) => {
     const format = new Date(startTime);
     format.setHours(format.getHours() - 6);  // Subtract 6 to account for Pacific time related to UTC time
     return format.toISOString().slice(0, 19);
   };
   
-  // Set default color based on logged in user/admin
-  const { user } = useAuth();
+  // Set default color based on logged in user
   const getUserColor = (userId) => {
     const colorMap = {
       1: '#477e11',   // Drew Event Color  -  Basil Green
@@ -35,7 +59,7 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
     return colorMap[userId] || '#0000ff'; // Default fallback color
   }
 
-  // Main data form for state variables
+  // Store data in state - Used to submit properly formatted data
   const [formData, setFormData] = useState({
     name: eventData?.title || '',
     address: eventData?.address || '',
@@ -57,7 +81,7 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
     misc: !!eventData?.miscCost,
   });
 
-  // UseEffect to update state for eventData 
+  // Update Form state whenever Event Data is modified/updated
   useEffect(() => {
     if (eventData) {
       setFormData({
@@ -81,35 +105,17 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
         misc: !!eventData.miscCost,
       });
     }
-  }, [eventData]);
-
-  // Constantly update state so it's always ready for submission
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Track checkbox state changes
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: checked }));
-  };
-
-  const clearAndReloadEvents = () => {
-    closeModal();
-    setDatabaseEvents(null);
-    updateEvents();
-    calendarRef.current?.getApi().changeView('dayGridMonth');
-  };
-
+  }, [eventData]); // Makes sure this hook runs when eventData is updated
 
   // Create & Update event in database 
   const handleSubmit = async (e) => {
+
+    // If valid token exist, attempt to Create or Update
     e.preventDefault();
-    const token = localStorage.getItem('access_token');
-    // If valid token exist, attempt to Create or Update 
+    const token = localStorage.getItem('access_token'); 
     if (token) {
-      // Create new event if event data doesn't exist
+
+      // Create event if event data does not exist
       if (!eventData) {
         try {
           const response = await axiosInstance.post(
@@ -117,17 +123,12 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
             formData,
             {headers: {Authorization: `Bearer ${token}`}});
 
-          // Successful Response (200 or 201)
-          if (response.status === 200 || response.status === 201) {
-              clearAndReloadEvents();
-              console.log('Data sent successfully:', response.data);
-            } 
-
-          // Show errors on bad response
+          // Success - Event created - Now clear state and reload calendar
+          if (response.status === 200 || response.status === 201) 
+            {clearAndReloadEvents();} 
           else 
             {console.error('Unexpected response status when creating event:', response.status);}
           }
-        // Handle errors from the request
         catch (error) 
           {console.error('Failed to create event:', error.response?.data || error.message);}
         }
@@ -140,36 +141,23 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
             formData,
             {headers: {Authorization: `Bearer ${token}`}});
 
-            // Successful Response (200 or 204)
-            if (response.status === 200) 
-              {console.log('Data sent successfully!', response.data);
-                clearAndReloadEvents();} 
-              
-            else if (response.status === 204) 
-              {console.log('Data sent successfully! No response given');
-                clearAndReloadEvents();} 
-
-            // Show errors on bad response
+            // Success - clear state and reload calendar
+            if (response.status === 200 || response.status === 204)
+              {clearAndReloadEvents();} 
             else 
               {console.error('Unexpected response status when updating event:', response.status);}
             }
-        // Handle errors from the request
         catch (error) 
           {console.error('Failed to update event:', error.response?.data || error.message);}}
         } 
-    // If no token found in local storage
     else 
       {console.log("No valid token found")}
   };
 
-
-
-
   // Delete event from database
   const handleDeleteEvent = async () => {
+    // If token exist, attempt to delete
     const token = localStorage.getItem("access_token");
-
-    // If valid token exist, attempt to delete 
     if (token) {
       try {
         const response = await axiosInstance.delete(`http://127.0.0.1:8000/api/calendar/delete_events/${eventData.id}/`,
@@ -177,102 +165,118 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'}});
 
-        // On successful response (204 or 200)
-        if (response.status === 204 || response.status === 200) {
-          clearAndReloadEvents();
-          console.log("Successful Delete")
-        } 
-        // Show errors on bad response
+        // Success - Event deleted - Clear/update state & reload calendar
+        if (response.status === 204 || response.status === 200) 
+          {clearAndReloadEvents();} 
         else 
           {console.error('Unexpected Response:', response)}
         }
-      // Handle errors from the request
       catch (error) 
           {console.error('Delete failed:', error.response?.data || error.message);}
         }
-    // If no token found in local storage
     else 
       {console.log("No Valid Token Found")}
   };
-
-
-
-
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <form className="form-content" style={{ pointerEvents: modalClickLock ? "none" : "auto" }} onSubmit={handleSubmit}> 
-          <div><label>Name:</label><input type="text" name="name" value={formData.name} onChange={handleChange} /></div>
-          <div><label>Address:</label><input type="text" name="address" value={formData.address} onChange={handleChange} /></div>
-          <div><label>Phone:</label><input type="text" name="phone" value={formData.phone} onChange={handleChange} /></div>
 
-          <div>
+          <div className='form-name'>
+            <label>Name:</label>
+              <input className='form-name-input' type="text" name="name" value={formData.name} onChange={handleChange} />
+          </div>
+
+          <div className='form-address'>
+            <label>Address:</label>
+              <input className='form-address-input' type="text" name="address" value={formData.address} onChange={handleChange} />
+          </div>
+
+          <div className='form-phone'>
+            <label>Phone:</label>
+              <input className='form-phone-input' type="text" name="phone" value={formData.phone} onChange={handleChange} />
+          </div>
+
+          <div className='form-start-time'>
             <label>Start Time:</label>
-            <input type="datetime-local" name="start_time" value={formData.start_time} onChange={handleChange} />
+              <input className='form-start-time-input' type="datetime-local" name="start_time" value={formData.start_time} onChange={handleChange} />
           </div>
 
-          <div>
+          <div className='form-end-time'>
             <label>End Time:</label>
-            <input type="datetime-local" name="end_time" value={formData.end_time} onChange={handleChange} />
+              <input className='form-end-time-input' type="datetime-local" name="end_time" value={formData.end_time} onChange={handleChange} />
           </div>
 
-          <div>
+          <div className='job-cost-type-container'>
             <label>Job Type:</label>
-            <div>
-              <label><input type="checkbox" name="windows" checked={formData.windows} onChange={handleCheckboxChange} /> Windows</label>
-              {formData.windows && (
-                <div>
-                  <label>Cost:</label>
-                  <input type="text" name="windows_cost" value={formData.windows_cost} onChange={handleChange} />
-                  <label>Notes:</label>
-                  <input type="text" name="windows_notes" value={formData.windows_notes} onChange={handleChange} />
-                </div>
-              )}
+
+              <div className='form-windows'>
+                <label>Windows</label>
+                  <input className='form-windows-checkbox' type="checkbox" name="windows" checked={formData.windows} onChange={handleCheckboxChange} />
+                    {formData.windows && (
+                      <div className='form-windows-inputs'>
+                        <label>Cost:</label>
+                          <input className='form-windows-cost-input' type="text" name="windows_cost" value={formData.windows_cost} onChange={handleChange} />
+                        <label>Notes:</label>
+                          <input className='form-windows-notes-input' type="text" name="windows_notes" value={formData.windows_notes} onChange={handleChange} />
+                      </div>)}
+              </div>
+
+            <div className='form-pressure-washing'>
+              <label>Pressure Washing</label>
+                <input className='form-pressure-washing-checkbox' type="checkbox" name="pressureWashing" checked={formData.pressureWashing} onChange={handleCheckboxChange} />
+                  {formData.pressureWashing && (
+                    <div className='form-pressure-washing-inputs'>
+                      <label>Cost:</label>
+                        <input className='form-pressure-washing-cost-input' type="text" name="pressure_washing_cost" value={formData.pressure_washing_cost} onChange={handleChange} />
+                      <label>Notes:</label>
+                        <input className='form-pressure-washing-notes-input' type="text" name="pressure_washing_notes" value={formData.pressure_washing_notes} onChange={handleChange} />
+                    </div>)}
             </div>
 
-            <div>
-              <label><input type="checkbox" name="pressureWashing" checked={formData.pressureWashing} onChange={handleCheckboxChange} /> Pressure Washing</label>
-              {formData.pressureWashing && (
-                <div>
-                  <label>Cost:</label>
-                  <input type="text" name="pressure_washing_cost" value={formData.pressure_washing_cost} onChange={handleChange} />
-                  <label>Notes:</label>
-                  <input type="text" name="pressure_washing_notes" value={formData.pressure_washing_notes} onChange={handleChange} />
-                </div>
-              )}
-            </div>
-
-            <div>
-              <label><input type="checkbox" name="misc" checked={formData.misc} onChange={handleCheckboxChange} /> Misc Work</label>
-              {formData.misc && (
-                <div>
-                  <label>Cost:</label>
-                  <input type="text" name="misc_cost" value={formData.misc_cost} onChange={handleChange} />
-                  <label>Notes:</label>
-                  <input type="text" name="misc_notes" value={formData.misc_notes} onChange={handleChange} />
-                </div>
-              )}
+            <div className='form-misc-work'>
+              <label>Misc Work</label>
+                <input className='form-misc-work-checkbox' type="checkbox" name="misc" checked={formData.misc} onChange={handleCheckboxChange} />
+                  {formData.misc && (
+                    <div className='form-misc-work-inputs'>
+                      <label>Cost:</label>
+                        <input className='form-misc-work-cost-input' type="text" name="misc_cost" value={formData.misc_cost} onChange={handleChange} />
+                      <label>Notes:</label>
+                        <input className='form-misc-work-notes-input' type="text" name="misc_notes" value={formData.misc_notes} onChange={handleChange} />
+                    </div>)}
             </div>
           </div>
 
-          <div><label>Email:</label><input type="email" name="email" value={formData.email} onChange={handleChange} /></div>
+          <div className='form-email'>
+            <label>Email:</label>
+              <input className='form-email-input' type="email" name="email" value={formData.email} onChange={handleChange} />
+          </div>
 
-          <div>
+          <div className='form-notes'>
             <label>General Notes:</label>
-            <input type="text" name="notes" value={formData.notes} onChange={handleChange} />
+              <input className='form-notes-input' type="text" name="notes" value={formData.notes} onChange={handleChange} />
           </div>
 
-          <div>
+          <div className='form-color'>
             <label>Color: </label>
-            <input type="color" name="event_color" value={formData.event_color} onChange={(e) =>
-              setFormData({ ...formData, event_color: e.target.value })} />
+              <input className='form-color-input' type="color" name="event_color" value={formData.event_color} onChange={(e) =>
+                setFormData({ ...formData, event_color: e.target.value })} />
           </div>
 
-          <button type="submit">{eventData ? 'Update Event' : 'Save New Event'}</button>
+          {/* If event data exists, update event. Otherwise, save and create new event */}
+          <button className='update-or-save-button' type="submit">
+            {eventData ? 'Update Event' : 'Save New Event'}
+          </button>
+
+          {/* If event data exists, add a Remove Event/Delete button */}
           {eventData && (
-            <button type="button" onClick={handleDeleteEvent}>Remove Event</button>)}
-          <button type="button" onClick={closeModal}>Close Window</button>
+            <button className='delete-event-button' type="button" onClick={handleDeleteEvent}>Remove Event</button>)
+          }
+
+          {/* Close window button - Always around */}
+          <button className='close-window-button' type="button" onClick={closeModal}>Close Window</button>
+
         </form>
       </div>
     </div>
