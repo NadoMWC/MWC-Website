@@ -181,101 +181,111 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <form className="form-content" style={{ pointerEvents: modalClickLock ? "none" : "auto" }} onSubmit={handleSubmit}> 
-
-          <div className='form-name'>
-            <label>Name:</label>
-              <input className='form-name-input' type="text" name="name" value={formData.name} onChange={handleChange} />
+        <form className="form-container" style={{ pointerEvents: modalClickLock ? "none" : "auto" }} onSubmit={handleSubmit}> 
+          
+          <div className='top-page-nav'>
+            <button className='top-button' type="button" onClick={closeModal}>Close</button>
+            <button className='top-button' type="submit">Save</button>
           </div>
 
-          <div className='form-address'>
-            <label>Address:</label>
-              <input className='form-address-input' type="text" name="address" value={formData.address} onChange={handleChange} />
+          <div className='form-row-div'>
+            <label className='form-label'>Name:</label>
+              <input className='form-input-field' type="text" name="name" value={formData.name} onChange={handleChange} />
           </div>
 
-          <div className='form-phone'>
-            <label>Phone:</label>
-              <input className='form-phone-input' type="text" name="phone" value={formData.phone} onChange={handleChange} />
+          <div className='form-row-div'>
+            <label className='form-label'>Address:</label>
+              <input className='form-input-field' type="text" name="address" value={formData.address} onChange={handleChange} />
           </div>
 
-          <div className='form-start-time'>
-            <label>Start Time:</label>
-              <input className='form-start-time-input' type="datetime-local" name="start_time" value={formData.start_time} onChange={handleChange} />
+          <div className='form-row-div'>
+            <label className='form-label'>Phone:</label>
+              <input className='form-input-field' type="text" name="phone" value={formData.phone} onChange={handleChange} />
           </div>
 
-          <div className='form-end-time'>
-            <label>End Time:</label>
-              <input className='form-end-time-input' type="datetime-local" name="end_time" value={formData.end_time} onChange={handleChange} />
+          <div className='form-row-div'>
+            <label className='form-label'>Start Time:</label>
+              <input className='form-input-field' type="datetime-local" name="start_time" value={formData.start_time} onChange={handleChange} />
           </div>
 
-          <div className='job-cost-type-container'>
-            <label>Job Type:</label>
-
-              <div className='form-windows'>
-                <label>Windows</label>
-                  <input className='form-windows-checkbox' type="checkbox" name="windows" checked={formData.windows} onChange={handleCheckboxChange} />
-                    {formData.windows && (
-                      <div className='form-windows-inputs'>
-                        <label>Cost:</label>
-                          <input className='form-windows-cost-input' type="text" name="windows_cost" value={formData.windows_cost} onChange={handleChange} />
-                        <label>Notes:</label>
-                          <input className='form-windows-notes-input' type="text" name="windows_notes" value={formData.windows_notes} onChange={handleChange} />
-                      </div>)}
-              </div>
-
-            <div className='form-pressure-washing'>
-              <label>Pressure Washing</label>
-                <input className='form-pressure-washing-checkbox' type="checkbox" name="pressureWashing" checked={formData.pressureWashing} onChange={handleCheckboxChange} />
-                  {formData.pressureWashing && (
-                    <div className='form-pressure-washing-inputs'>
-                      <label>Cost:</label>
-                        <input className='form-pressure-washing-cost-input' type="text" name="pressure_washing_cost" value={formData.pressure_washing_cost} onChange={handleChange} />
-                      <label>Notes:</label>
-                        <input className='form-pressure-washing-notes-input' type="text" name="pressure_washing_notes" value={formData.pressure_washing_notes} onChange={handleChange} />
-                    </div>)}
-            </div>
-
-            <div className='form-misc-work'>
-              <label>Misc Work</label>
-                <input className='form-misc-work-checkbox' type="checkbox" name="misc" checked={formData.misc} onChange={handleCheckboxChange} />
-                  {formData.misc && (
-                    <div className='form-misc-work-inputs'>
-                      <label>Cost:</label>
-                        <input className='form-misc-work-cost-input' type="text" name="misc_cost" value={formData.misc_cost} onChange={handleChange} />
-                      <label>Notes:</label>
-                        <input className='form-misc-work-notes-input' type="text" name="misc_notes" value={formData.misc_notes} onChange={handleChange} />
-                    </div>)}
-            </div>
+          <div className='form-row-div'>
+            <label className='form-label'>End Time:</label>
+              <input className='form-input-field' type="datetime-local" name="end_time" value={formData.end_time} onChange={handleChange} />
           </div>
 
-          <div className='form-email'>
-            <label>Email:</label>
-              <input className='form-email-input' type="email" name="email" value={formData.email} onChange={handleChange} />
+          <div className='form-row-div'>
+            <label className='form-label'>Email:</label>
+              <input className='form-input-field' type="email" name="email" value={formData.email} onChange={handleChange} />
           </div>
 
-          <div className='form-notes'>
-            <label>General Notes:</label>
-              <input className='form-notes-input' type="text" name="notes" value={formData.notes} onChange={handleChange} />
+          <div className='form-row-div'>
+            <label className='form-label'>Job Notes:</label>
+              <input className='form-input-field' type="text" name="notes" value={formData.notes} onChange={handleChange} />
           </div>
 
-          <div className='form-color'>
-            <label>Color: </label>
+          <div className='form-windows'>
+            <label className='form-label'>Window Cleaning</label>
+              <input className='form-checkbox' type="checkbox" name="windows" checked={formData.windows} onChange={handleCheckboxChange} />
+                {formData.windows && (
+                  <div>
+
+                    <div className='form-row-div'>
+                      <label className='form-jobtype-label'>Cost:</label>
+                        <input className='form-input-field' type="text" name="windows_cost" value={formData.windows_cost} onChange={handleChange} />
+                    </div>
+                    <div className='form-row-div'>
+                      <label className='form-jobtype-label'>Notes:</label>
+                        <input className='form-input-field' type="text" name="windows_notes" value={formData.windows_notes} onChange={handleChange} />
+                    </div>
+
+                  </div>
+                )}
+          </div>
+
+          <div className='form-pressure-washing'>
+            <label className='form-label'>Pressure Washing</label>
+              <input className='form-checkbox' type="checkbox" name="pressureWashing" checked={formData.pressureWashing} onChange={handleCheckboxChange} />
+                {formData.pressureWashing && (
+                  <div>
+                    <div className='form-row-div'>
+                      <label className='form-jobtype-label'>Cost:</label>
+                        <input className='form-input-field' type="text" name="pressure_washing_cost" value={formData.pressure_washing_cost} onChange={handleChange} />
+                    </div>
+                    <div className='form-row-div'>
+                      <label className='form-jobtype-label'>Notes:</label>
+                        <input className='form-input-field' type="text" name="pressure_washing_notes" value={formData.pressure_washing_notes} onChange={handleChange} />
+                    </div>
+                  </div>
+                )}
+          </div>
+
+          <div className='form-misc-work'>
+            <label className='form-label'>Miscellaneous Work</label>
+              <input className='form-checkbox' type="checkbox" name="misc" checked={formData.misc} onChange={handleCheckboxChange} />
+                {formData.misc && (
+                  <div>
+                    <div className='form-row-div'>
+                      <label className='form-jobtype-label'>Cost:</label>
+                        <input className='form-input-field' type="text" name="misc_cost" value={formData.misc_cost} onChange={handleChange} />
+                    </div>
+                    <div className='form-row-div'>
+                      <label className='form-jobtype-label'>Notes:</label>
+                        <input className='form-input-field' type="text" name="misc_notes" value={formData.misc_notes} onChange={handleChange} />
+                    </div>
+                  </div>                   
+                )}
+          </div>
+
+          <div className='form-row-div'>
+            <label className='form-label'>Color: </label>
               <input className='form-color-input' type="color" name="event_color" value={formData.event_color} onChange={(e) =>
                 setFormData({ ...formData, event_color: e.target.value })} />
           </div>
 
-          {/* If event data exists, update event. Otherwise, save and create new event */}
-          <button className='update-or-save-button' type="submit">
-            {eventData ? 'Update Event' : 'Save New Event'}
-          </button>
-
-          {/* If event data exists, add a Remove Event/Delete button */}
+          {/* If event exists - Add Remove Event/Delete button */}
           {eventData && (
             <button className='delete-event-button' type="button" onClick={handleDeleteEvent}>Remove Event</button>)
           }
-
-          {/* Close window button - Always around */}
-          <button className='close-window-button' type="button" onClick={closeModal}>Close Window</button>
 
         </form>
       </div>

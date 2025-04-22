@@ -8,17 +8,17 @@
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   z-index: 1000;
 }
 .modal-content {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
+  padding: 0px;
+  border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
   max-width: 400px;
-  width: 90%;
+  width: 100%;
   text-align: center;
   z-index: 1001;
 }
@@ -26,44 +26,97 @@
 
 /* -----EVENT FORM STYLING SECTION----- */
 
-.form-name {}
-.form-name-input {}
-.form-address {}
-.form-addres-input {}
-.form-phone {}
-.form-phone-input {}
-.form-start-time {}
-.form-start-time-input {}
-.form-end-time {}
-.form-end-time-input {}
+.form-container {
+  background-color: rgb(246, 246, 246);
+  height: 85vh;
+  padding: 0px;
+  text-align: left;
+  border-radius: 10px;
+}
 
-.job-cost-type-container {}
-.form-windows {}
-.form-windows-checkbox {}
-.form-windows-inputs {}
-.form-windows-cost-input {}
-.form-windows-notes-input {}
-.form-pressure-washing {}
-.form-pressure-washing-checkbox {}
-.form-pressure-washing-inputs {}
-.form-pressure-washing-cost-input {}
-.form-pressure-washing-notes-input {}
-.form-misc-work {}
-.form-misc-work-checkbox {}
-.form-misc-work-inputs {}
-.form-misc-work-cost-input {}
-.form-misc-work-notes-input {}
+.form-row-div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
 
-.form-email {}
-.form-email-input {}
-.form-notes {}
-.form-notes-input {}
-.form-color {}
-.form-color-input {}
+.form-label {
+  font-size: 30px;
+  width: 150px; 
+}
 
-.update-or-save-button {}
-.delete-event-button {}
-.close-window-button {}
+.form-input-field {
+  font-size: 30px;
+  height: 30px;
+  flex: 1; 
+  min-width: 0; 
+}
+
+.form-checkbox {
+  height: 30px;
+  width: 30px;
+}
+
+.form-jobtype-label {
+  font-size: 30px;
+  width: 150px; 
+  text-align: right;
+  display: block;
+}
+
+.form-color-input {
+  width: 100px;
+  height: 35px;
+  padding: 0px;
+  border-radius: 5px;
+}
+
+
+
+
+.top-page-nav {
+  display: flex;
+  justify-content: space-between; /* pushes children to far ends */
+  align-items: center; /* optional: aligns them vertically */
+  padding: 5px; /* optional: adds spacing inside */
+  margin-bottom: 5px;
+  border-radius: 10px;
+  height: 40px;
+}
+
+.top-button {
+  text-decoration: none;
+  border: none;
+  color: rgb(2, 85, 163);
+  background-color: transparent;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.top-button:active {
+  color: rgb(122, 184, 242);
+}
+
+.delete-event-button {
+  border: 5px solid rgb(224, 0, 0);
+  color: white;
+  background-color: rgb(213, 0, 0);
+  border-radius: 10px;
+  font-size: 25px;
+  font-weight: bold;
+  padding: 5px 5px;
+  box-shadow: 5px 5px 5px 1px black;
+  display: block; /* or keep it as flex */
+  margin: 0 auto; /* centers it horizontally */
+  margin-top: 15px;
+}
+
+.delete-event-button:active {
+  color: white;
+  background-color: rgb(213, 0, 0);
+  box-shadow: 1px 1px 1px 1px black;
+  transform: translateY(2px);
+}
 
 
 
