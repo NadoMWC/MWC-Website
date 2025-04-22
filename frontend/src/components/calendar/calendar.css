@@ -1,7 +1,7 @@
 
 
 
-/* -----Modal Styling Section----- */
+/* -----MODAL STYLING SECTION----- */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -28,92 +28,116 @@
 
 
 
-/* -----Custom Styling Section----- */
 
+/* -----CALENDAR STYLING SECTION----- */
 /* Disable pointer events only in month view */
 .fc-dayGridMonth-view .fc-event {
-  
   pointer-events: none;
 }
 
-
-
-/* -----Calendar Styling Section----- */
-
-/* -- Calendar Toolbar Nav Section-- */
-.fc .fc-toolbar .fc-button.fc-dayGridMonth-button {
-  background-color: #c97003;
-  color: rgb(207, 144, 27);
-  border-radius: 4px;
-  padding: 6px 12px;
+/* >>> Calendar Toolbar Section <<< */
+/* Calendar Toolbar - Main Container */
+.fc .fc-toolbar.fc-header-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0px;
+  padding: 1px 1px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.fc-toolbar-chunk {
+  padding: 5px 5px;
 }
 
-/*  */
+/* Calendar Toolbar - Date Title Element */
+.fc-toolbar-chunk:nth-child(1) {
+  font-size: 12px;
+}
+
+/* Calendar Toolbar - Searchbar Element */
 .fc-toolbar-chunk:nth-child(2) {
   flex-grow: 1;
   display: flex;
   justify-content: center;
+  background-color: white;
 }
-
-/*  */
 .fc-toolbar-chunk:nth-child(2) .fc-button {
   flex: 1;
   width: 100%;
+  border: 5px solid rgb(151, 151, 151);
+  background-color: rgb(240, 240, 240);
+  color: rgb(90, 90, 90);
+  border-radius: 10px;
+  font-weight: bold;
+}
+.fc-toolbar-chunk:nth-child(2) .fc-button:active {
+  outline: none;
+  box-shadow: none;
+  color: white;
+  background-color: rgb(151, 151, 151);
+  border: 5px solid rgb(151, 151, 151);
+}
+.fc-toolbar-chunk:nth-child(2) .fc-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+.fc-toolbar-chunk:nth-child(2) .fc-button:focus:active {
+  outline: none; 
+  box-shadow: none;
 }
 
-/* --Calendar Content Section-- */
-
-/* Center Day of Month */
-.fc .fc-daygrid-day-top {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Calendar Toolbar - Calendar Button */
+.fc .fc-toolbar .fc-button.fc-dayGridMonth-button {
+  background-color: rgb(31, 97, 151);
+  color: rgb(255, 255, 255);
+  border: 5px solid rgb(11, 68, 154);
+  box-shadow: 4px 4px 4px black;
+  border-radius: 10px;
+  padding: 2px 2px;
+  font-size: 20px;
+  transition: transform 0.05s ease;
+}
+.fc .fc-toolbar .fc-button.fc-dayGridMonth-button:active {
+  transform: translateY(2px);
+  background-color: rgb(39, 79, 152);
+  box-shadow: none;
+}
+.fc .fc-toolbar .fc-button.fc-dayGridMonth-button:focus {
+  outline: none;
+  box-shadow: 2px 2px 2px black;
 }
 
-/* Hide Month View Event Dot */
-.fc-daygrid-event-dot {
-  display: none;
-}
 
-/* Hide Month View Event Time */
-.fc-event-time {
-  display: none;
-}
-
-/*  */
-.fc .fc-daygrid-event-harness {
-  font-size: 13px;
-  display: inline;
-}
-
-/*  */
+/* >>> Calendar Content Section <<< */
+/* Calendar Content - Stretch content to bottom of screen */
 .fc.fc-media-screen.fc-direction-ltr.fc-theme-standard {
   height: 100vh; 
   display: flex;
   flex-direction: column;
 }
 
-/*  */
-.fc .fc-toolbar.fc-header-toolbar {
+/* Calendar Content - Center Day # and hide event dot + time */
+.fc .fc-daygrid-day-top {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 0em;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+}
+.fc-daygrid-event-dot {
+  display: none;
+}
+.fc-event-time {
+  display: none;
 }
 
-/*  */
-.fc-view-harness {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-} 
-
-/*  */
-.fc-view-harness-active {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+/* Calendar Content - Font settings & Frame Height */
+.fc .fc-daygrid-event-harness {
+  font-size: 13px;
+  font-weight: bold;
+}
+.fc-daygrid-day-frame {
+  height: 100px;
+  overflow: hidden;
+  position: relative;
 }

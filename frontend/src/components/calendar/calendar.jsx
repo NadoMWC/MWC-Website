@@ -159,7 +159,7 @@ function MyCalendar() {
         email: event.email,
         description: event.notes,
         color: event.event_color,
-        display: 'block',
+        display: 'block', // Set events to block style format on calendar
       }));
   
       setDatabaseEvents(transformedEvents);
@@ -190,11 +190,14 @@ function MyCalendar() {
         }}
         customButtons={{
           searchBarPlaceHolder: {
-            text: 'Searchbar',
+            text: '🔍 Search',
             click: function () {
               console.log('Searchbar Placeholder clicked!');
             },
           },
+        }}
+        buttonText={{
+          dayGridMonth: 'Calendar', // <-- Custom label here
         }}
       />
 
