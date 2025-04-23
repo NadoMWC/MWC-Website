@@ -1,14 +1,59 @@
 import './calendar.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axiosInstance from '../../api/axiosInstance.js'
 import { useAuth } from '../../context/AuthContext.jsx';
+import CalorPalette from './color_palette.jpg';
 
 // Pass in props to the Event Modal & Form
 function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabaseEvents, calendarRef }) {
   
   // React hooks
   const [modalClickLock, setModalClickLock] = useState(true); // Prevent double clicks
+  const [animateOut, setAnimateOut] = useState(false); 
   const { user } = useAuth(); // Store&access user id (Logged in user)
+
+  const [startY, setStartY] = useState(null);
+  const [scrollTop, setScrollTop] = useState(0);
+
+  const modalRef = useRef(null);
+
+  // Track & handle scroll
+  const handleScroll = () => {
+    if (modalRef.current) 
+          {setScrollTop(modalRef.current.scrollTop);}
+  };
+
+  const handleTouchStart = (e) => {
+    setStartY(e.touches[0].clientY);
+  };
+
+  useEffect(() => {
+    const modalEl = modalRef.current;
+    if (!modalEl) return;
+  
+    modalEl.addEventListener("scroll", handleScroll);
+    modalEl.addEventListener("touchstart", handleTouchStart);
+    modalEl.addEventListener("touchend", handleTouchEnd);
+  
+    return () => {
+      modalEl.removeEventListener("scroll", handleScroll);
+      modalEl.removeEventListener("touchstart", handleTouchStart);
+      modalEl.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [scrollTop, startY]);
+
+  const handleTouchEnd = (e) => {
+    if (startY === null) return;
+
+    const endY = e.changedTouches[0].clientY;
+    const diff = endY - startY;
+    const SWIPE_THRESHOLD = 350; // pixels
+
+    if (diff > SWIPE_THRESHOLD && scrollTop === 0) 
+      {handleClose(); }
+
+    setStartY(null);
+  };
 
   // On component mount, ensure no double clicks for .4 seconds
   useEffect(() => {
@@ -19,7 +64,7 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
   // Close Modal if clicked outside main content area
   const handleOverlayClick = (e) => {
     if (modalClickLock) {return;}
-    closeModal();
+    handleClose();
   };
 
   // Constantly update state so it's always ready for submission
@@ -36,7 +81,7 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
 
   // Ensure a clean state reset and view change
   const clearAndReloadEvents = () => {
-    closeModal();
+    handleClose();
     setDatabaseEvents(null);
     updateEvents();
     calendarRef.current?.getApi().changeView('dayGridMonth');
@@ -178,63 +223,87 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
       {console.log("No Valid Token Found")}
   };
 
+  // Close Modal & Handle open/close animation state
+  const handleClose = () => {
+    setAnimateOut(true);
+    setTimeout(() => {
+      closeModal(); 
+    }, 500); // match CSS animation duration
+  };
+
+
+
+  const google_colors_rgb = {
+    Tomato: "rgb(234, 67, 53)",
+    Tangerine: "rgb(251, 188, 5)",
+    Banana: "rgb(255, 241, 118)",
+    Basil: "rgb(52, 168, 83)",
+    Sage: "rgb(173, 204, 96)",
+    Peacock: "rgb(3, 155, 229)",
+    Blueberry: "rgb(26, 115, 232)",
+    Lavendar: "rgb(140, 124, 255)",
+    Grape: "rgb(123, 31, 162)",
+    Flamingo: "rgb(233, 30, 99)",
+    Graphite: "rgb(97, 97, 97)"
+  };
+
+
+
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      <div  className={`modal-content ${animateOut ? "modal-exit" : "modal-enter"}`} 
+            onClick={(e) => e.stopPropagation()}
+            ref={modalRef}>
         <form className="form-container" style={{ pointerEvents: modalClickLock ? "none" : "auto" }} onSubmit={handleSubmit}> 
           
           <div className='top-page-nav'>
-            <button className='top-button' type="button" onClick={closeModal}>Close</button>
+            <button className='top-button' type="button" onClick={handleClose}>Close</button>
             <button className='top-button' type="submit">Save</button>
           </div>
 
-          <div className='form-row-div'>
-            <label className='form-label'>Name:</label>
-              <input className='form-input-field' type="text" name="name" value={formData.name} onChange={handleChange} />
+          <div className='form-row-name'>
+              <input className='form-input-field' placeholder="Add title or name..." type="text" name="name" value={formData.name} onChange={handleChange} />
           </div>
 
           <div className='form-row-div'>
-            <label className='form-label'>Address:</label>
-              <input className='form-input-field' type="text" name="address" value={formData.address} onChange={handleChange} />
+              <input className='form-input-field' placeholder="Address" type="text" name="address" value={formData.address} onChange={handleChange} />
           </div>
 
           <div className='form-row-div'>
-            <label className='form-label'>Phone:</label>
+            <label className='form-label'>Phone</label>
               <input className='form-input-field' type="text" name="phone" value={formData.phone} onChange={handleChange} />
           </div>
 
           <div className='form-row-div'>
-            <label className='form-label'>Start Time:</label>
               <input className='form-input-field' type="datetime-local" name="start_time" value={formData.start_time} onChange={handleChange} />
           </div>
 
           <div className='form-row-div'>
-            <label className='form-label'>End Time:</label>
               <input className='form-input-field' type="datetime-local" name="end_time" value={formData.end_time} onChange={handleChange} />
           </div>
 
           <div className='form-row-div'>
-            <label className='form-label'>Email:</label>
-              <input className='form-input-field' type="email" name="email" value={formData.email} onChange={handleChange} />
-          </div>
-
-          <div className='form-row-div'>
-            <label className='form-label'>Job Notes:</label>
+            <label className='form-label'>Notes</label>
               <input className='form-input-field' type="text" name="notes" value={formData.notes} onChange={handleChange} />
           </div>
 
-          <div className='form-windows'>
+          <div className='form-row-div'>
+            <label className='form-label'>Email</label>
+              <input className='form-input-field' type="email" name="email" value={formData.email} onChange={handleChange} />
+          </div>
+
+          <div className='.form-windows'>
             <label className='form-label'>Window Cleaning</label>
               <input className='form-checkbox' type="checkbox" name="windows" checked={formData.windows} onChange={handleCheckboxChange} />
                 {formData.windows && (
                   <div>
 
                     <div className='form-row-div'>
-                      <label className='form-jobtype-label'>Cost:</label>
+                      <label className='form-jobtype-label'>Cost</label>
                         <input className='form-input-field' type="text" name="windows_cost" value={formData.windows_cost} onChange={handleChange} />
                     </div>
                     <div className='form-row-div'>
-                      <label className='form-jobtype-label'>Notes:</label>
+                      <label className='form-jobtype-label'>Notes</label>
                         <input className='form-input-field' type="text" name="windows_notes" value={formData.windows_notes} onChange={handleChange} />
                     </div>
 
@@ -242,43 +311,46 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
                 )}
           </div>
 
-          <div className='form-pressure-washing'>
+          <div className='.form-row-div'>
             <label className='form-label'>Pressure Washing</label>
               <input className='form-checkbox' type="checkbox" name="pressureWashing" checked={formData.pressureWashing} onChange={handleCheckboxChange} />
                 {formData.pressureWashing && (
                   <div>
                     <div className='form-row-div'>
-                      <label className='form-jobtype-label'>Cost:</label>
+                      <label className='form-jobtype-label'>Cost</label>
                         <input className='form-input-field' type="text" name="pressure_washing_cost" value={formData.pressure_washing_cost} onChange={handleChange} />
                     </div>
                     <div className='form-row-div'>
-                      <label className='form-jobtype-label'>Notes:</label>
+                      <label className='form-jobtype-label'>Notes</label>
                         <input className='form-input-field' type="text" name="pressure_washing_notes" value={formData.pressure_washing_notes} onChange={handleChange} />
                     </div>
                   </div>
                 )}
           </div>
 
-          <div className='form-misc-work'>
+          <div className='.form-row-div'>
             <label className='form-label'>Miscellaneous Work</label>
               <input className='form-checkbox' type="checkbox" name="misc" checked={formData.misc} onChange={handleCheckboxChange} />
                 {formData.misc && (
                   <div>
                     <div className='form-row-div'>
-                      <label className='form-jobtype-label'>Cost:</label>
+                      <label className='form-jobtype-label'>Cost</label>
                         <input className='form-input-field' type="text" name="misc_cost" value={formData.misc_cost} onChange={handleChange} />
                     </div>
                     <div className='form-row-div'>
-                      <label className='form-jobtype-label'>Notes:</label>
+                      <label className='form-jobtype-label'>Notes</label>
                         <input className='form-input-field' type="text" name="misc_notes" value={formData.misc_notes} onChange={handleChange} />
                     </div>
                   </div>                   
                 )}
           </div>
 
-          <div className='form-row-div'>
-            <label className='form-label'>Color: </label>
-              <input className='form-color-input' type="color" name="event_color" value={formData.event_color} onChange={(e) =>
+          <div className='form-row-color-div'>
+            <img className="form-color-image" src={CalorPalette}></img>
+            <div className="color-testing-container"></div>
+            <h2>Chosen Color</h2>
+
+            <input className='form-color-input' type="color" name="event_color" value={formData.event_color} onChange={(e) =>
                 setFormData({ ...formData, event_color: e.target.value })} />
           </div>
 
@@ -287,6 +359,7 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
             <button className='delete-event-button' type="button" onClick={handleDeleteEvent}>Remove Event</button>)
           }
 
+          <div className='form-spacer'></div>  {/* Spacer for bottom of page */}
         </form>
       </div>
     </div>

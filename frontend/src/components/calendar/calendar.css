@@ -1,4 +1,36 @@
 
+@keyframes slideUp {
+  from {
+    transform: translateY(100%) scale(1);
+    opacity: .6;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%) scale(1);
+    opacity: .6;
+  }
+}
+
+/* Class to trigger entry animation */
+.modal-enter {
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+/* Class to trigger exit animation */
+.modal-exit {
+  animation: slideDown 0.4s ease-in forwards;
+}
+
 /* -----MODAL STYLING SECTION----- */
 .modal-overlay {
   position: fixed;
@@ -14,7 +46,7 @@
 }
 .modal-content {
   background: white;
-  padding: 0px;
+  overflow-y: auto;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
   max-width: 400px;
@@ -28,28 +60,68 @@
 
 .form-container {
   background-color: rgb(246, 246, 246);
+  overflow-y: auto;
   height: 85vh;
-  padding: 0px;
+  padding: 5px;
   text-align: left;
   border-radius: 10px;
 }
-
+.form-spacer {
+  height: 60px;
+}
 .form-row-div {
+  margin-top: 15px;
   display: flex;
-  align-items: center;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
+}
+
+.form-row-name .form-input-field {
+  display: flex;
+  height: 10px;
+}
+
+.form-row-color-div {
+  display: flex;
+  justify-content: left;
+  margin-bottom: 10px;
+}
+
+.form-color-image {
+  height: 50px;
+  width: 50px;
+}
+
+.color-testing-container {
+  height: 30px;
+  width: 30px;
+  border-radius: 10px;
+  background-color: blue;
+  display: flex;
+  justify-content: center;
+  margin-left: 10px;
+}
+
+.form-color-input {
+  width: 100px;
+  height: 35px;
+  padding: 0px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: right;
+  text-align: right;
+  margin-left: auto
 }
 
 .form-label {
   font-size: 30px;
-  width: 150px; 
+  width: fit-content; 
+  padding-left: 3px;
 }
 
 .form-input-field {
   font-size: 30px;
   height: 30px;
-  flex: 1; 
-  min-width: 0; 
+  width: 95%;
 }
 
 .form-checkbox {
@@ -64,22 +136,21 @@
   display: block;
 }
 
-.form-color-input {
-  width: 100px;
-  height: 35px;
-  padding: 0px;
-  border-radius: 5px;
-}
-
-
 
 
 .top-page-nav {
+  position: sticky;
+  outline: 10px solid rgb(246, 246, 246);
+  border: 10px solid rgb(246, 246, 246);
+  box-sizing: border-box;
+  top: 0;
+  z-index: 10; /* ⬅️ keep it above scrollable content */
+  background-color: rgb(246, 246, 246); /* ⬅️ must set background or it’ll be see-through */
   display: flex;
   justify-content: space-between; /* pushes children to far ends */
   align-items: center; /* optional: aligns them vertically */
   padding: 5px; /* optional: adds spacing inside */
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   border-radius: 10px;
   height: 40px;
 }
@@ -88,7 +159,7 @@
   text-decoration: none;
   border: none;
   color: rgb(2, 85, 163);
-  background-color: transparent;
+  background-color: rgb(246, 246, 246);
   font-size: 25px;
   font-weight: 600;
 }
@@ -117,6 +188,15 @@
   box-shadow: 1px 1px 1px 1px black;
   transform: translateY(2px);
 }
+
+
+
+
+
+
+
+
+
 
 
 
