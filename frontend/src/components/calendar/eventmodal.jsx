@@ -2,7 +2,11 @@ import './calendar.css';
 import React, { useState, useEffect, useRef } from 'react';
 import axiosInstance from '../../api/axiosInstance.js'
 import { useAuth } from '../../context/AuthContext.jsx';
-import CalorPalette from './color_palette.jpg';
+import Email from './email_logo.jpg';
+import Location from './location_logo.png';
+import Phone from './phone_logo.jpg';
+import Notes from './notes_logo.jpg';
+import Colors from './color_palette.jpg';
 
 // Pass in props to the Event Modal & Form
 function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabaseEvents, calendarRef }) {
@@ -248,6 +252,8 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
   };
 
 
+  const [colorsListOpen, setColorsListOpen] = useState(false);
+  const [selectedColor, setSelectedColor] = useState(null);
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
@@ -262,35 +268,68 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
           </div>
 
           <div className='form-row-name'>
-              <input className='form-input-field' placeholder="Add title or name..." type="text" name="name" value={formData.name} onChange={handleChange} />
+              <input className='form-input-field' placeholder="Add title/name" type="text" name="name" value={formData.name} onChange={handleChange} />
+          </div>
+
+          <hr></hr>
+
+          <div className='form-row-div'>
+              <input className='form-input-field-time' type="datetime-local" name="start_time" value={formData.start_time} onChange={handleChange} />
           </div>
 
           <div className='form-row-div'>
-              <input className='form-input-field' placeholder="Address" type="text" name="address" value={formData.address} onChange={handleChange} />
+              <input className='form-input-field-time' type="datetime-local" name="end_time" value={formData.end_time} onChange={handleChange} />
           </div>
 
-          <div className='form-row-div'>
-            <label className='form-label'>Phone</label>
-              <input className='form-input-field' type="text" name="phone" value={formData.phone} onChange={handleChange} />
-          </div>
+          <hr></hr>
 
           <div className='form-row-div'>
-              <input className='form-input-field' type="datetime-local" name="start_time" value={formData.start_time} onChange={handleChange} />
+            <img className="form-image-logo" src={Location}></img>
+              <input className='form-input-field-info' placeholder="Add location" type="text" name="address" value={formData.address} onChange={handleChange} />
           </div>
 
-          <div className='form-row-div'>
-              <input className='form-input-field' type="datetime-local" name="end_time" value={formData.end_time} onChange={handleChange} />
-          </div>
+          <hr></hr>
 
           <div className='form-row-div'>
-            <label className='form-label'>Notes</label>
-              <input className='form-input-field' type="text" name="notes" value={formData.notes} onChange={handleChange} />
+            <img className="form-image-logo" src={Phone}></img>
+              <input className='form-input-field-info' placeholder="Add phone" type="text" name="phone" value={formData.phone} onChange={handleChange} />
           </div>
 
+          <hr></hr>
+
           <div className='form-row-div'>
-            <label className='form-label'>Email</label>
-              <input className='form-input-field' type="email" name="email" value={formData.email} onChange={handleChange} />
+            <img className="form-image-logo" src={Email}></img>
+              <input className='form-input-field-info' placeholder="Add email" type="email" name="email" value={formData.email} onChange={handleChange} />
           </div>
+
+          <hr></hr>
+
+          <div className='form-row-div'>
+            <img className="form-image-logo" src={Notes}></img>
+              <textarea className='form-input-field-notes' placeholder="Add notes" type="text" name="notes" value={formData.notes} onChange={handleChange} />
+          </div>
+
+          <hr></hr>
+
+          <div className='form-row-color-div' onClick={() => setColorsListOpen(prev => !prev)}>
+            <div className='form-color-main-row'>
+              <img className="form-image-logo" src={Colors}></img>
+              <div className="color-testing-container"></div>
+              <div className="form-selected-color">Default Color</div>
+            </div>
+            {colorsListOpen && (
+              <div className='colors-list'>
+                {Object.entries(google_colors_rgb).map(([name, rgb]) => (
+                  <div key={name} className='color-option' style={{ display: 'flex', alignItems: 'center', marginBottom: '6px', cursor: 'pointer' }}>
+                    <div style={{ width: '16px', height: '16px', backgroundColor: rgb, marginRight: '8px', borderRadius: '4px' }}></div>
+                    <span>{name}</span>
+                  </div>
+                ))}
+              </div>
+            )}    
+          </div>
+
+          <hr></hr>
 
           <div className='.form-windows'>
             <label className='form-label'>Window Cleaning</label>
@@ -299,17 +338,18 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
                   <div>
 
                     <div className='form-row-div'>
-                      <label className='form-jobtype-label'>Cost</label>
-                        <input className='form-input-field' type="text" name="windows_cost" value={formData.windows_cost} onChange={handleChange} />
+                    <label style={{ fontSize: '30px' }}>$</label>
+                        <input className='form-cost-field' placeholder="" type="text" name="windows_cost" value={formData.windows_cost} onChange={handleChange} />
                     </div>
-                    <div className='form-row-div'>
-                      <label className='form-jobtype-label'>Notes</label>
-                        <input className='form-input-field' type="text" name="windows_notes" value={formData.windows_notes} onChange={handleChange} />
+                    <div className='form-textarea'>
+                        <textarea className='form-textarea-notes' placeholder="Description" type="text" name="windows_notes" value={formData.windows_notes} onChange={handleChange} />
                     </div>
 
                   </div>
                 )}
           </div>
+
+          <hr></hr>
 
           <div className='.form-row-div'>
             <label className='form-label'>Pressure Washing</label>
@@ -317,16 +357,17 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
                 {formData.pressureWashing && (
                   <div>
                     <div className='form-row-div'>
-                      <label className='form-jobtype-label'>Cost</label>
-                        <input className='form-input-field' type="text" name="pressure_washing_cost" value={formData.pressure_washing_cost} onChange={handleChange} />
+                      <label style={{ fontSize: '30px' }}>$</label>
+                        <input className='form-cost-field' placeholder="" type="text" name="pressure_washing_cost" value={formData.pressure_washing_cost} onChange={handleChange} />
                     </div>
                     <div className='form-row-div'>
-                      <label className='form-jobtype-label'>Notes</label>
-                        <input className='form-input-field' type="text" name="pressure_washing_notes" value={formData.pressure_washing_notes} onChange={handleChange} />
+                        <textarea className='form-textarea-notes' placeholder="Description" type="text" name="pressure_washing_notes" value={formData.pressure_washing_notes} onChange={handleChange} />
                     </div>
                   </div>
                 )}
           </div>
+
+          <hr></hr>
 
           <div className='.form-row-div'>
             <label className='form-label'>Miscellaneous Work</label>
@@ -334,25 +375,17 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
                 {formData.misc && (
                   <div>
                     <div className='form-row-div'>
-                      <label className='form-jobtype-label'>Cost</label>
-                        <input className='form-input-field' type="text" name="misc_cost" value={formData.misc_cost} onChange={handleChange} />
+                      <label style={{ fontSize: '30px' }}>$</label>
+                        <input className='form-cost-field' placeholder="" type="text" name="misc_cost" value={formData.misc_cost} onChange={handleChange} />
                     </div>
                     <div className='form-row-div'>
-                      <label className='form-jobtype-label'>Notes</label>
-                        <input className='form-input-field' type="text" name="misc_notes" value={formData.misc_notes} onChange={handleChange} />
+                        <textarea className='form-textarea-notes' placeholder="Description" type="text" name="misc_notes" value={formData.misc_notes} onChange={handleChange} />
                     </div>
                   </div>                   
                 )}
           </div>
 
-          <div className='form-row-color-div'>
-            <img className="form-color-image" src={CalorPalette}></img>
-            <div className="color-testing-container"></div>
-            <h2>Chosen Color</h2>
-
-            <input className='form-color-input' type="color" name="event_color" value={formData.event_color} onChange={(e) =>
-                setFormData({ ...formData, event_color: e.target.value })} />
-          </div>
+          <hr></hr>
 
           {/* If event exists - Add Remove Event/Delete button */}
           {eventData && (

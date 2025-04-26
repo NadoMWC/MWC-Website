@@ -66,50 +66,103 @@
   text-align: left;
   border-radius: 10px;
 }
+
 .form-spacer {
-  height: 60px;
+  height: 400px;
 }
+
 .form-row-div {
   margin-top: 15px;
   display: flex;
   margin-bottom: 15px;
+  background-color: transparent;
+}
+
+.form-textarea-notes {
+  height: 90px;
+  font-size: 25px;
+  width: 98%;
+}
+
+.form-input-field-notes {
+  border: none;
+  outline: none;
+  height: 90px;
+  width: 100%;
+  font-size: 25px;
+  background-color: transparent;
+}
+
+.form-cost-field {
+  font-size: 30px;
+  height: 30px;
+  width: 40%;
+  box-shadow: 1px 1px 1px black;
+}
+
+.form-input-field-time {
+  display: flex;
+  padding: 0px 5px;
+  border: none;
+  outline: none;
+  height: 50px;
+  font-size: 30px;
+  width: fit-content;
 }
 
 .form-row-name .form-input-field {
   display: flex;
-  height: 10px;
+  height: 70px;
+  font-size: 40px;
+  padding: 0px 5px;
+  border: none;
+  outline: none;
+  background-color: transparent;
 }
 
 .form-row-color-div {
-  display: flex;
-  justify-content: left;
   margin-bottom: 10px;
 }
 
-.form-color-image {
-  height: 50px;
-  width: 50px;
+.form-color-main-row {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding: 5px;
+}
+
+.form-image-logo {
+  height: 35px;
+  width: 35px;
+  margin-right: 10px;
 }
 
 .color-testing-container {
   height: 30px;
   width: 30px;
   border-radius: 10px;
-  background-color: blue;
-  display: flex;
-  justify-content: center;
-  margin-left: 10px;
+  background-color: rgb(3, 155, 229);
+  margin-right: 10px;
 }
 
-.form-color-input {
-  width: 100px;
-  height: 35px;
-  padding: 0px;
-  border-radius: 5px;
+.form-selected-color {
+  font-size: 25px;
+  width: 100%;
+}
+
+.colors-list {
+  font-size: 25px;
+}
+
+.form-input-field-info {
   display: flex;
-  justify-content: right;
-  text-align: right;
-  margin-left: auto
+  padding: 0px 5px;
+  border: none;
+  outline: none;
+  height: 50px;
+  font-size: 30px;
+  margin-left: 5px;
+  width: fit-content;
 }
 
 .form-label {
