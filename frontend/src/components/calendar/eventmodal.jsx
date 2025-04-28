@@ -17,10 +17,8 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
   const { user } = useAuth(); // Store&access user id (Logged in user)
   const [startY, setStartY] = useState(null);
   const [scrollTop, setScrollTop] = useState(0);
-
   const [colorsListOpen, setColorsListOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(null);
-
   const modalRef = useRef(null);
 
   // First: set up selectedColor based on eventData or user
@@ -31,15 +29,6 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
       setSelectedColor(getUserColor(user?.user_id));
     }
   }, [eventData, user]); // <-- Only when eventData or user changes
-
-  // Second: react to selectedColor changes
-  useEffect(() => {
-    if (selectedColor) {
-      console.log("Selected color changed:", selectedColor);
-      // You can trigger anything else you want here
-    }
-  }, [selectedColor]); // <-- Only when selectedColor changes
-
 
 
   // Track & handle scroll
@@ -168,14 +157,14 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
         misc_notes: eventData.miscNotes || '',
         email: eventData.email || '',
         notes: eventData.description || '',
-        event_color: selectedColor || '',
+        event_color: eventData.color || '',
         event: eventData.id || '',
         windows: !!eventData.windowsCost,
         pressureWashing: !!eventData.pressureWashingCost,
         misc: !!eventData.miscCost,
       });
     }
-  }, [eventData, selectedColor]); // Makes sure this hook runs when eventData is updated
+  }, [eventData]); // Makes sure this hook runs when eventData is updated
 
   // Create & Update event in database 
   const handleSubmit = async (e) => {
@@ -195,10 +184,7 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
 
           // Success - Event created - Now clear state and reload calendar
           if (response.status === 200 || response.status === 201) 
-            {
-              console.log(formData);
-              clearAndReloadEvents();
-            } 
+            {clearAndReloadEvents();} 
           else 
             {console.error('Unexpected response status when creating event:', response.status);}
           }
@@ -266,7 +252,6 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
   
 
   const chooseColor = (name, hex) => {
-    console.log(name, hex);
     setSelectedColor(hex);
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -288,7 +273,29 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
     Flamingo: "#E91E63",
     Graphite: "#616161"
   };
-  
+
+
+  const dateTimes = (startTime) => {
+    const dateObj = new Date(startTime);
+    const dateOptions1 = {weekday: 'long', month: 'short', day: 'numeric', timeZone: 'America/Los_Angeles'};
+    const formattedStartDate = dateObj.toLocaleDateString('en-US', dateOptions1);
+    const endDate = new Date(startTime);
+          endDate.setHours(endDate.getHours() + 1);
+    const dateOptions2 = { weekday: 'long', month: 'short', day: 'numeric' };
+    const formattedEndDate = endDate.toLocaleDateString('en-US', dateOptions2);
+    const timeObj = new Date(startTime);
+    const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
+    const formattedStartTime = timeObj.toLocaleTimeString('en-US', timeOptions);
+    const endTimeObj = new Date(timeObj.getTime() + 60 * 60 * 1000); // Add 1 hour (in milliseconds)
+    const formattedEndTime = endTimeObj.toLocaleTimeString('en-US', timeOptions);
+
+    return [formattedStartDate, formattedStartTime, formattedEndDate, formattedEndTime];
+  };
+
+
+
+  const [showMonthGrid, setShowMonthGrid] = useState(false)
+
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
@@ -309,12 +316,32 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
           <hr></hr>
 
           <div className='form-row-div'>
+            <div className='form-date-container'>
+              <div className='form-date-container-row' onClick={() => setShowMonthGrid(prev => !prev)}>{dateTimes(startTime)[0]}</div>
+              <div className='form-date-container-row'>{dateTimes(startTime)[1]}</div>
+            </div>
+            {showMonthGrid && (
+              <div className='month-grid-selector'>
+                MonthGridSelector
+              </div>
+            )}
+
+          </div>
+
+          <div className='form-row-div'>
+            <div className='form-date-container'>
+              <div className='form-date-container-row'>{dateTimes(startTime)[2]}</div>
+              <div className='form-date-container-row'>{dateTimes(startTime)[3]}</div>
+            </div>
+          </div>
+
+          {/* <div className='form-row-div'>
               <input className='form-input-field-time' type="datetime-local" name="start_time" value={formData.start_time} onChange={handleChange} />
           </div>
 
           <div className='form-row-div'>
               <input className='form-input-field-time' type="datetime-local" name="end_time" value={formData.end_time} onChange={handleChange} />
-          </div>
+          </div> */}
 
           <hr></hr>
 

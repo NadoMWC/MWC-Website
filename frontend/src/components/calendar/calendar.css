@@ -181,6 +181,22 @@
   display: block;
 }
 
+.form-date-container {
+  display: flex; 
+  flex-grow: 1; 
+  text-align: center;
+}
+
+.form-date-container-row {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.form-starttime-time {
+  flex-grow: 1;
+  text-align: center;
+}
+
 
 
 .top-page-nav {
