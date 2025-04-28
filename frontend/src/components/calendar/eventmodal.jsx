@@ -15,11 +15,32 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
   const [modalClickLock, setModalClickLock] = useState(true); // Prevent double clicks
   const [animateOut, setAnimateOut] = useState(false); 
   const { user } = useAuth(); // Store&access user id (Logged in user)
-
   const [startY, setStartY] = useState(null);
   const [scrollTop, setScrollTop] = useState(0);
 
+  const [colorsListOpen, setColorsListOpen] = useState(false);
+  const [selectedColor, setSelectedColor] = useState(null);
+
   const modalRef = useRef(null);
+
+  // First: set up selectedColor based on eventData or user
+  useEffect(() => {
+    if (eventData && eventData.color) {
+      setSelectedColor(eventData.color);
+    } else {
+      setSelectedColor(getUserColor(user?.user_id));
+    }
+  }, [eventData, user]); // <-- Only when eventData or user changes
+
+  // Second: react to selectedColor changes
+  useEffect(() => {
+    if (selectedColor) {
+      console.log("Selected color changed:", selectedColor);
+      // You can trigger anything else you want here
+    }
+  }, [selectedColor]); // <-- Only when selectedColor changes
+
+
 
   // Track & handle scroll
   const handleScroll = () => {
@@ -101,9 +122,9 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
   // Set default color based on logged in user
   const getUserColor = (userId) => {
     const colorMap = {
-      1: '#477e11',   // Drew Event Color  -  Basil Green
-      2: '#ffa500',   // Jason Event Color -  Gold Orange
-      3: '#3f96fc',   // Wray Event Color  -  Standard Light Blue
+      1: '#34A853',   // Drew Event Color  -  Basil Green
+      2: '#FBC005',   // Jason Event Color -  Tangerine Orange
+      3: '#039BE5',   // Wray Event Color  -  Peacock Blue
     };  
     return colorMap[userId] || '#0000ff'; // Default fallback color
   }
@@ -147,14 +168,14 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
         misc_notes: eventData.miscNotes || '',
         email: eventData.email || '',
         notes: eventData.description || '',
-        event_color: eventData.color || getUserColor(user?.user_id) || '',
+        event_color: selectedColor || '',
         event: eventData.id || '',
         windows: !!eventData.windowsCost,
         pressureWashing: !!eventData.pressureWashingCost,
         misc: !!eventData.miscCost,
       });
     }
-  }, [eventData]); // Makes sure this hook runs when eventData is updated
+  }, [eventData, selectedColor]); // Makes sure this hook runs when eventData is updated
 
   // Create & Update event in database 
   const handleSubmit = async (e) => {
@@ -174,7 +195,10 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
 
           // Success - Event created - Now clear state and reload calendar
           if (response.status === 200 || response.status === 201) 
-            {clearAndReloadEvents();} 
+            {
+              console.log(formData);
+              clearAndReloadEvents();
+            } 
           else 
             {console.error('Unexpected response status when creating event:', response.status);}
           }
@@ -235,25 +259,36 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
     }, 500); // match CSS animation duration
   };
 
+  const getColorNameFromRgb = (hex) => {
+    const entry = Object.entries(google_colors_hex).find(([name, value]) => value === hex);
+    return entry ? entry[0] : "Default Color"; // fallback if not found
+  };
+  
 
-
-  const google_colors_rgb = {
-    Tomato: "rgb(234, 67, 53)",
-    Tangerine: "rgb(251, 188, 5)",
-    Banana: "rgb(255, 241, 118)",
-    Basil: "rgb(52, 168, 83)",
-    Sage: "rgb(173, 204, 96)",
-    Peacock: "rgb(3, 155, 229)",
-    Blueberry: "rgb(26, 115, 232)",
-    Lavendar: "rgb(140, 124, 255)",
-    Grape: "rgb(123, 31, 162)",
-    Flamingo: "rgb(233, 30, 99)",
-    Graphite: "rgb(97, 97, 97)"
+  const chooseColor = (name, hex) => {
+    console.log(name, hex);
+    setSelectedColor(hex);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      event_color: hex,
+    }));
+    setColorsListOpen(false);
   };
 
-
-  const [colorsListOpen, setColorsListOpen] = useState(false);
-  const [selectedColor, setSelectedColor] = useState(null);
+  const google_colors_hex = {
+    Tomato: "#EA4335",
+    Tangerine: "#FBC005",
+    Banana: "#FFF176",
+    Basil: "#34A853",
+    Sage: "#ADCC60",
+    Peacock: "#039BE5",
+    Blueberry: "#1A73E8",
+    Lavendar: "#8C7CFF",
+    Grape: "#7B1FA2",
+    Flamingo: "#E91E63",
+    Graphite: "#616161"
+  };
+  
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
@@ -311,17 +346,36 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
 
           <hr></hr>
 
-          <div className='form-row-color-div' onClick={() => setColorsListOpen(prev => !prev)}>
-            <div className='form-color-main-row'>
+          <div className='form-row-color-div'>
+            <div className='form-color-main-row' onClick={() => setColorsListOpen(prev => !prev)}>
               <img className="form-image-logo" src={Colors}></img>
-              <div className="color-testing-container"></div>
-              <div className="form-selected-color">Default Color</div>
+              <div className="color-testing-container"
+                   style={
+                      {
+                        height: '25px',
+                        width: '25px',
+                        borderRadius: '4px',
+                        backgroundColor: selectedColor,
+                        marginRight: '10px',
+                      }
+                    }>
+              </div>
+              <div className="form-selected-color">{getColorNameFromRgb(selectedColor)}</div>
             </div>
             {colorsListOpen && (
               <div className='colors-list'>
-                {Object.entries(google_colors_rgb).map(([name, rgb]) => (
-                  <div key={name} className='color-option' style={{ display: 'flex', alignItems: 'center', marginBottom: '6px', cursor: 'pointer' }}>
-                    <div style={{ width: '16px', height: '16px', backgroundColor: rgb, marginRight: '8px', borderRadius: '4px' }}></div>
+                {Object.entries(google_colors_hex).map(([name, hex]) => (
+                  <div 
+                    key={name} 
+                    className='color-option'
+                    onClick={() => chooseColor(name, hex)} 
+                    style={
+                        { display: 'flex', alignItems: 'center', marginBottom: '6px', cursor: 'pointer' }
+                      }>
+                    <div style={
+                      { width: '16px', height: '16px', backgroundColor: hex, marginRight: '8px', borderRadius: '4px' }
+                      }>
+                    </div>
                     <span>{name}</span>
                   </div>
                 ))}
@@ -331,7 +385,7 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
 
           <hr></hr>
 
-          <div className='.form-windows'>
+          <div className='.form-row-div'>
             <label className='form-label'>Window Cleaning</label>
               <input className='form-checkbox' type="checkbox" name="windows" checked={formData.windows} onChange={handleCheckboxChange} />
                 {formData.windows && (
@@ -370,7 +424,7 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
           <hr></hr>
 
           <div className='.form-row-div'>
-            <label className='form-label'>Miscellaneous Work</label>
+            <label className='form-label'>Misc Work</label>
               <input className='form-checkbox' type="checkbox" name="misc" checked={formData.misc} onChange={handleCheckboxChange} />
                 {formData.misc && (
                   <div>
