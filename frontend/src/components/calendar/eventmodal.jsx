@@ -294,8 +294,64 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
 
 
 
-  const [showMonthGrid, setShowMonthGrid] = useState(false)
+  const [showStartMonthGrid, setShowStartMonthGrid] = useState(false)
+  const [showStartTimeGrid, setShowStartTimeGrid] = useState(false)
+  const [showEndMonthGrid, setShowEndMonthGrid] = useState(false)
+  const [showEndTimeGrid, setShowEndTimeGrid] = useState(false)
 
+  const hideEndGrids = () => {
+    setShowEndMonthGrid(false);
+    setShowEndTimeGrid(false);
+  };
+
+  const hideStartGrids = () => {
+    setShowStartMonthGrid(false);
+    setShowStartTimeGrid(false);
+  };
+
+  const toggleStartMonthGrid = () => {
+    hideEndGrids();
+    if (showStartTimeGrid) {
+        setShowStartTimeGrid(false);
+        setShowStartMonthGrid(true);
+    } 
+    else {
+        setShowStartMonthGrid(prev => !prev);
+    }
+  };
+
+  const toggleStartTimeGrid = () => {
+    hideEndGrids();
+    if (showStartMonthGrid) {
+      setShowStartMonthGrid(false);
+      setShowStartTimeGrid(true);
+    } 
+    else {
+      setShowStartTimeGrid(prev => !prev);
+    }
+  };
+
+  const toggleEndMonthGrid = () => {
+    hideStartGrids();
+    if (showEndTimeGrid) {
+        setShowEndTimeGrid(false);
+        setShowEndMonthGrid(true);
+    } 
+    else {
+        setShowEndMonthGrid(prev => !prev);
+    }
+  };
+
+  const toggleEndTimeGrid = () => {
+    hideStartGrids();
+    if (showEndMonthGrid) {
+      setShowEndMonthGrid(false);
+      setShowEndTimeGrid(true);
+    } 
+    else {
+      setShowEndTimeGrid(prev => !prev);
+    }
+  };
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
@@ -315,33 +371,39 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
 
           <hr></hr>
 
-          <div className='form-row-div'>
+          <div className='form-row-time'>
             <div className='form-date-container'>
-              <div className='form-date-container-row' onClick={() => setShowMonthGrid(prev => !prev)}>{dateTimes(startTime)[0]}</div>
-              <div className='form-date-container-row'>{dateTimes(startTime)[1]}</div>
+              <div className='form-date-container-row' onClick={toggleStartMonthGrid}>{dateTimes(startTime)[0]}</div>
+              <div className='form-date-container-row' onClick={toggleStartTimeGrid}>{dateTimes(startTime)[1]}</div>
             </div>
-            {showMonthGrid && (
+            {(showStartMonthGrid && !showStartTimeGrid) && (
               <div className='month-grid-selector'>
-                MonthGridSelector
+                <p> Start Month Grid Selector</p>
               </div>
             )}
-
+            {(showStartTimeGrid && !showStartMonthGrid) && (
+              <div className='time-wheel-selector'>
+                <p> Start Time Wheel Selector</p>
+              </div>
+            )}
           </div>
 
-          <div className='form-row-div'>
+          <div className='form-row-time'>
             <div className='form-date-container'>
-              <div className='form-date-container-row'>{dateTimes(startTime)[2]}</div>
-              <div className='form-date-container-row'>{dateTimes(startTime)[3]}</div>
+              <div className='form-date-container-row' onClick={toggleEndMonthGrid}>{dateTimes(startTime)[2]}</div>
+              <div className='form-date-container-row' onClick={toggleEndTimeGrid}>{dateTimes(startTime)[3]}</div>
             </div>
+            {(showEndMonthGrid && !showEndTimeGrid) && (
+              <div className='month-grid-selector'>
+                <p> End Month Grid Selector</p>
+              </div>
+            )}
+            {(showEndTimeGrid && !showEndMonthGrid) && (
+              <div className='time-wheel-selector'>
+                <p> End Time Wheel Selector</p>
+              </div>
+            )}
           </div>
-
-          {/* <div className='form-row-div'>
-              <input className='form-input-field-time' type="datetime-local" name="start_time" value={formData.start_time} onChange={handleChange} />
-          </div>
-
-          <div className='form-row-div'>
-              <input className='form-input-field-time' type="datetime-local" name="end_time" value={formData.end_time} onChange={handleChange} />
-          </div> */}
 
           <hr></hr>
 
@@ -468,7 +530,7 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
 
           <hr></hr>
 
-          {/* If event exists - Add Remove Event/Delete button */}
+          {/* If event exists - Add Delete button */}
           {eventData && (
             <button className='delete-event-button' type="button" onClick={handleDeleteEvent}>Remove Event</button>)
           }
