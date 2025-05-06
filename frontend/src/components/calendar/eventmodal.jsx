@@ -1,4 +1,6 @@
 import './calendar.css';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
 import React, { useState, useEffect, useRef } from 'react';
 import axiosInstance from '../../api/axiosInstance.js'
 import { useAuth } from '../../context/AuthContext.jsx';
@@ -293,7 +295,7 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
   };
 
 
-
+  // **Start** - Section for handling start/end date/time clicks/divs
   const [showStartMonthGrid, setShowStartMonthGrid] = useState(false)
   const [showStartTimeGrid, setShowStartTimeGrid] = useState(false)
   const [showEndMonthGrid, setShowEndMonthGrid] = useState(false)
@@ -353,6 +355,12 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
     }
   };
 
+  // **END** - Section for handling start/end date/time clicks/divs
+
+
+
+  const [selected, setSelected] = useState();
+
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div  className={`modal-content ${animateOut ? "modal-exit" : "modal-enter"}`} 
@@ -378,7 +386,14 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
             </div>
             {(showStartMonthGrid && !showStartTimeGrid) && (
               <div className='month-grid-selector'>
-                <p> Start Month Grid Selector</p>
+                <div className='form-calendar-grid'>
+                  <DayPicker
+                    mode="single"
+                    selected={selected}
+                    onSelect={setSelected}
+                  />
+                  {selected && <p>You picked: {selected.toDateString()}</p>}
+                </div>
               </div>
             )}
             {(showStartTimeGrid && !showStartMonthGrid) && (
