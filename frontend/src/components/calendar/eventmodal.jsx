@@ -13,6 +13,8 @@ import Colors from './color_palette.jpg';
 // Pass in props to the Event Modal & Form
 function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabaseEvents, calendarRef }) {
   
+    console.log(eventData);
+
   // React hooks
   const [modalClickLock, setModalClickLock] = useState(true); // Prevent double clicks
   const [animateOut, setAnimateOut] = useState(false); 
@@ -22,6 +24,30 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
   const [colorsListOpen, setColorsListOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(null);
   const modalRef = useRef(null);
+
+  const [startMonthGrid, setStartMonthGrid] = useState(null);
+  const [endMonthGrid, setEndMonthGrid] = useState(null);
+  const [startTimeWheel, setStartTimeWheel] = useState(null);
+  const [endTimeWheel, setEndTimeWheel] = useState(null);
+
+  useEffect(() => {
+    const dateObj = new Date(startTime);
+    const dateOptions1 = {weekday: 'long', month: 'short', day: 'numeric', timeZone: 'America/Los_Angeles'};
+    const formattedStartDate = dateObj.toLocaleDateString('en-US', dateOptions1);
+    setStartMonthGrid(formattedStartDate);
+    const endDate = new Date(startTime);
+    endDate.setHours(endDate.getHours() + 1);
+    const dateOptions2 = { weekday: 'long', month: 'short', day: 'numeric' };
+    const formattedEndDate = endDate.toLocaleDateString('en-US', dateOptions2);
+    setEndMonthGrid(formattedEndDate);
+    const timeObj = new Date(startTime);
+    const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
+    const formattedStartTime = timeObj.toLocaleTimeString('en-US', timeOptions);
+    setStartTimeWheel(formattedStartTime);
+    const endTimeObj = new Date(timeObj.getTime() + 60 * 60 * 1000); // Add 1 hour (in milliseconds)
+    const formattedEndTime = endTimeObj.toLocaleTimeString('en-US', timeOptions);
+    setEndTimeWheel(formattedEndTime);
+  }, []);
 
   // First: set up selectedColor based on eventData or user
   useEffect(() => {
@@ -277,24 +303,6 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
   };
 
 
-  const dateTimes = (startTime) => {
-    const dateObj = new Date(startTime);
-    const dateOptions1 = {weekday: 'long', month: 'short', day: 'numeric', timeZone: 'America/Los_Angeles'};
-    const formattedStartDate = dateObj.toLocaleDateString('en-US', dateOptions1);
-    const endDate = new Date(startTime);
-          endDate.setHours(endDate.getHours() + 1);
-    const dateOptions2 = { weekday: 'long', month: 'short', day: 'numeric' };
-    const formattedEndDate = endDate.toLocaleDateString('en-US', dateOptions2);
-    const timeObj = new Date(startTime);
-    const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
-    const formattedStartTime = timeObj.toLocaleTimeString('en-US', timeOptions);
-    const endTimeObj = new Date(timeObj.getTime() + 60 * 60 * 1000); // Add 1 hour (in milliseconds)
-    const formattedEndTime = endTimeObj.toLocaleTimeString('en-US', timeOptions);
-
-    return [formattedStartDate, formattedStartTime, formattedEndDate, formattedEndTime];
-  };
-
-
   // **Start** - Section for handling start/end date/time clicks/divs
   const [showStartMonthGrid, setShowStartMonthGrid] = useState(false)
   const [showStartTimeGrid, setShowStartTimeGrid] = useState(false)
@@ -381,8 +389,12 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
 
           <div className='form-row-time'>
             <div className='form-date-container'>
-              <div className='form-date-container-row' onClick={toggleStartMonthGrid}>{dateTimes(startTime)[0]}</div>
-              <div className='form-date-container-row' onClick={toggleStartTimeGrid}>{dateTimes(startTime)[1]}</div>
+              <div className='form-date-container-row' onClick={toggleStartMonthGrid}>
+                {eventData.start || startMonthGrid}
+              </div>
+              <div className='form-date-container-row' onClick={toggleStartTimeGrid}>
+                {eventData.start || startMonthGrid}
+              </div>
             </div>
             {(showStartMonthGrid && !showStartTimeGrid) && (
               <div className='month-grid-selector'>
@@ -405,8 +417,8 @@ function EventModal({ closeModal, eventData, startTime, updateEvents, setDatabas
 
           <div className='form-row-time'>
             <div className='form-date-container'>
-              <div className='form-date-container-row' onClick={toggleEndMonthGrid}>{dateTimes(startTime)[2]}</div>
-              <div className='form-date-container-row' onClick={toggleEndTimeGrid}>{dateTimes(startTime)[3]}</div>
+              <div className='form-date-container-row' onClick={toggleEndMonthGrid}>{endMonthGrid}</div>
+              <div className='form-date-container-row' onClick={toggleEndTimeGrid}>{endTimeWheel}</div>
             </div>
             {(showEndMonthGrid && !showEndTimeGrid) && (
               <div className='month-grid-selector'>
